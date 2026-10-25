@@ -1,0 +1,11 @@
+import {playerName} from './core.js';
+import {deck,shuffle,trickWinner} from './core.js';
+export function newDahar(options={}){const stock=shuffle(deck()),hand=Array.from({length:4},()=>stock.splice(0,5)),trump=['S','H','D','C'].includes(options.trump)?options.trump:null;if(trump)hand.forEach(h=>h.push(...stock.splice(0,8)));return {type:'daharmara',options,hand,stock,trump,trick:[],lastTrick:[],turn:0,phase:'play',selected:[],over:false,scores:[0,0,0,0],middle:[],captured:[[],[]],previous:null,tricksDone:0,message:trump?`Follow suit. Trump is ${trump}.`:'Follow suit. The first off-suit card establishes trump.'};}
+export function daharLegal(g,p){if(!g.trick.length)return g.hand[p];const suit=g.trick[0].card.s,follow=g.hand[p].filter(c=>c.s===suit);return follow.length?follow:g.hand[p];}
+export function daharPlay(g,p,id){if(g.over||g.turn!==p)throw Error('Wait for your turn.');const c=daharLegal(g,p).find(c=>c.id===id);if(!c)throw Error('Follow the led suit when you can.');if(g.trick.length&&!g.trump&&c.s!==g.trick[0].card.s)g.trump=c.s;g.hand[p]=g.hand[p].filter(c=>c.id!==id);g.trick.push({player:p,card:c});if(g.trick.length<4){g.turn=(p+1)%4;return;}
+ const winner=trickWinner(g.trick,g.trump),cards=g.trick.map(t=>t.card);g.middle.push(...cards);g.lastTrick=[...g.trick];g.trick=[];g.tricksDone++;if((g.previous!==null&&(g.options.teamCapture?g.previous%2===winner%2:g.previous===winner))||g.tricksDone===13){g.captured[winner%2].push(...g.middle);g.middle=[];g.previous=null;}else g.previous=winner;g.turn=winner;
+ if(g.stock.length&&(g.trump||g.tricksDone===5)){if(!g.trump)g.trump=cards[0].s;g.hand.forEach(h=>h.push(...g.stock.splice(0,8)));}
+ const tens=g.captured.map(h=>h.filter(c=>c.r===10).length);g.message=`${playerName(g,winner)} won the trick. Trump: ${g.trump||'undecided'}. Captured tens: your team ${tens[0]}, opponents ${tens[1]}.`;
+ if(g.tricksDone===13){g.over=true;const win=tens[0]>tens[1]?0:tens[0]<tens[1]?1:0;g.teamWinner=win;g.kot=tens[win]===4;g.scores=g.hand.map((_,p)=>p%2===win?1:0);g.message=`${win===0?'Your team':'Opponents'} wins with ${tens[win]} tens${g.kot?' — Kot!':''}. On a 2–2 tie, the non-dealing team (you + ${playerName(g,2)}) wins.`;}
+}
+export function daharBot(g){const p=g.turn;daharPlay(g,p,daharLegal(g,p).sort((a,b)=>a.r-b.r)[0].id);}

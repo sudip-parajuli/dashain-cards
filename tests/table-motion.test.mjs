@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {motionSnapshot,cardTransitions} from '../web/table-motion.js';
+const card=id=>({id,r:2,s:'H'}),state=()=>({type:'marriage',turn:1,phase:'draw',stock:[card('s')],hand:[[card('a')],[card('b')]],pile:[card('p')]});
+test('sorting and selecting do not animate moves',()=>{const g=state(),a=motionSnapshot(g);g.selected=['a'];g.hand[0].reverse();assert.deepEqual(cardTransitions(a,motionSnapshot(g)),[]);});
+test('a complete opponent turn animates draw followed by discard',()=>{const g=state(),a=motionSnapshot(g);g.stock=[];g.hand[1]=[card('s')];g.pile.push(card('b'));g.turn=0;const moves=cardTransitions(a,motionSnapshot(g));assert.deepEqual(moves.map(x=>[x.kind,x.player]),[['draw',1],['discard',1]]);});
+test('taking a discard identifies pile as source',()=>{const g=state(),a=motionSnapshot(g);g.hand[0].push(g.pile.pop());assert.equal(cardTransitions(a,motionSnapshot(g))[0].source,'pile');});
+test('trick play animates only the newly played card',()=>{const g=state();g.type='callbreak';g.trick=[{player:0,card:card('a')}];const a=motionSnapshot(g);g.trick.push({player:1,card:card('b')});assert.deepEqual(cardTransitions(a,motionSnapshot(g)).map(x=>[x.kind,x.player]),[['play',1]]);});

@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: dashain-cards-rooms
+    runtime: node
+    plan: free
+    buildCommand: node --check server/start.mjs
+    startCommand: node server/start.mjs
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22.17.1
+      - key: ALLOWED_ORIGINS
+        value: https://cards.example.com
+      - key: LOCAL_ROOM_SERVICE
+        value: "1"

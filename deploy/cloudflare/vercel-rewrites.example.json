@@ -1,0 +1,7 @@
+{
+ "redirects":[{"source":"/dashaincards","destination":"/dashaincards/","permanent":true}],
+ "rewrites":[
+  {"source":"/dashaincards/","destination":"https://REPLACE-WITH-DEPLOYED-WORKER.workers.dev/dashaincards/"},
+  {"source":"/dashaincards/:path*","destination":"https://REPLACE-WITH-DEPLOYED-WORKER.workers.dev/dashaincards/:path*"}
+ ]
+}

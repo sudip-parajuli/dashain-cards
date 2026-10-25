@@ -1,0 +1,1 @@
+import {cp,mkdir} from 'node:fs/promises';await mkdir('dist',{recursive:true});await cp('web','dist',{recursive:true});await mkdir('android/app/src/main/assets/public',{recursive:true});await cp('web','android/app/src/main/assets/public',{recursive:true});console.log('Web and Android assets built.');

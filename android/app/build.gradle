@@ -1,0 +1,21 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'com.dashaincards.app'
+    compileSdk 36
+    defaultConfig {
+        applicationId 'com.dashaincards.app'
+        minSdk 26
+        targetSdk 36
+        versionCode 28
+        versionName '1.4.0'
+    }
+    buildTypes { release { minifyEnabled false } }
+}
+
+
+
+
+
+
+
+
