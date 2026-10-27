@@ -8,6 +8,14 @@ Seven Nepali card games, one place to play and keep score. Built around the Dash
 
 [View the phone homepage](docs/screenshots/home.png)
 
+## Engineering focus
+
+The project combines reusable rules engines with browser-local play and a
+server-authoritative friends-room service. Important boundaries include legal
+moves, concealed opponent cards, reconnect/state handling and configurable house
+rules. Read [architecture](docs/ARCHITECTURE.md) for those decisions and
+[Android setup](docs/ANDROID.md) for the development companion's current scope.
+
 ## Games and features
 
 | Game | Players | Play and scoring |
