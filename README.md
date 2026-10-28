@@ -2,7 +2,7 @@
 
 Seven Nepali card games, one place to play and keep score. Built around the Dashain tradition of gathering around a table, with English and Nepali interfaces, offline bot games, online friends rooms and shared live scorekeepers.
 
-**[Try the live app](https://www.techwiredsolutions.com.np/dashaincards)** · Version 1.4.0 · Android companion app in development
+**[Try the live app](https://www.techwiredsolutions.com.np/dashaincards)** · Version 1.4.1 · Android companion app in development
 
 ![Marriage in landscape](docs/screenshots/landscape.png)
 
@@ -70,7 +70,7 @@ npm test
 npm run build
 ```
 
-The current suite contains 145 tests covering rules, settlements, hidden-card boundaries, stale actions, live scores, durable restarts and animation transitions. Building copies `web/` to `dist/` and the Android assets folder; generated copies are intentionally untracked.
+The current suite contains 151 tests covering rules, settlements, hidden-card boundaries, stale actions, live scores, durable restarts and animation transitions. Building copies `web/` to `dist/` and the Android assets folder; generated copies are intentionally untracked.
 
 See [Android setup](docs/ANDROID.md) for the debug APK, and [architecture](docs/ARCHITECTURE.md) for the project structure.
 
@@ -95,3 +95,11 @@ The Android app is a development build, not a published Play Store release. Phys
 Read [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md) and [third-party notices](THIRD_PARTY_NOTICES.md). No open-source license has been selected for the application code; public visibility alone does not grant reuse rights. The bundled Baloo 2 font retains its SIL Open Font License.
 
 Built by **Sudip Parajuli / Techwired Solutions**. Support: s.techwired@gmail.com.
+
+## Version 1.4.1
+
+Desktop Jutpatti uses an overlapping curved hand and automatic pair/wild sorting. New deals default to the indicator rank for 2–3 players and the next higher rank for 4–6; Ace wraps to 2. The old lower-rank preference migrates to this automatic rule for new deals; active rounds retain their stored wild rank. Same, higher and no-wild variants remain configurable.
+
+Cards can be discarded anywhere in the centre play area in Marriage, Dhumbal and Jutpatti; Call Break and Dahar Mara continue to use that area for legal trick plays. Existing turn/phase validation still applies.
+
+New offline wallets start with 5,000 coins. Existing balances are preserved. Active users receive 150 coins automatically once per 24 hours; missed days do not accumulate. Rewards stay outside any committed game budget and cannot be claimed twice after reload. No ad reward integration is included.

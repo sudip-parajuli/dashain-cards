@@ -1,5 +1,5 @@
 import {POINT_GAMES,economyRules,settleGameEconomy} from './game-economy.js';
-export const COINS={initial:1000,entry:10,winReturn:30,refill:200,wait:10*60*1000,daily:50,day:24*60*60*1000};
+export const COINS={initial:5000,entry:10,winReturn:30,refill:200,wait:10*60*1000,daily:150,day:24*60*60*1000};
 const round=n=>Math.round(n*1000000)/1000000;
 export function newWallet(now=Date.now()){return {balance:COINS.initial,active:null,refillAt:null,dailyAt:now+COINS.day,transactions:[]};}
 export function validWallet(w){return w&&Number.isFinite(w.balance)&&w.balance>=0&&w.balance<=1e12&&(w.active===null||typeof w.active==='string')&&(w.refillAt===null||Number.isFinite(w.refillAt))&&Number.isFinite(w.dailyAt)&&Array.isArray(w.transactions)&&w.transactions.length<=30;}
@@ -24,3 +24,6 @@ export function claimCoins(w,kind,now=Date.now()){
  else throw Error('Unknown coin reward.');
 }
 
+
+// Activity grants one reward after the cooldown; missed days never accumulate.
+export function grantDailyActivity(w,now=Date.now()){if(!validWallet(w)||now<w.dailyAt)return false;claimCoins(w,'daily',now);return true;}

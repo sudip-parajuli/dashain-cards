@@ -3,6 +3,7 @@ import {deck,shuffle,legalCards,trickWinner,callScore,callDealConfig,threeRank,c
 import {newMarriage} from './marriage.js';
 import {newDahar} from './dahar.js';
 import {newFaras} from './faras.js';
+export function jutpattiWild(indicator,players,mode='auto'){if(mode==='below')mode='auto';if(mode==='none')return 0;if(mode==='same'||mode==='auto'&&players<4)return indicator;return indicator===14?2:indicator+1;}
 export function newGame(type,options={}){
  if(type==='marriage')return newMarriage(options);
  if(type==='daharmara')return newDahar(options);
@@ -11,7 +12,7 @@ export function newGame(type,options={}){
  if(type==='callbreak'){const deal=callDealConfig(Number(options.players??4));g.deal=deal;g.removed=deal.removed;const ids=new Set(g.removed.map(c=>c.id));g.stock=g.stock.filter(c=>!ids.has(c.id));g.hand=Array.from({length:deal.players},()=>g.stock.splice(0,deal.cardsPerPlayer));g.bids=Array(deal.players).fill(0);g.tricks=Array(deal.players).fill(0);g.trick=[];g.phase='bid';g.scores=Array(deal.players).fill(0);g.message='How many tricks will you take?';}
  else if(type==='kitti'){g.hand=Array.from({length:Number(options.players??3)},()=>g.stock.splice(0,9));g.groups=[];g.phase='split';g.message='Select three cards for your first hand.';}
  else if(type==='faras'){g.hand=Array.from({length:3},()=>g.stock.splice(0,3));g.phase='show';g.message='Hand comparison practice. Reveal to compare all three hands.';}
- else if(type==='jutpatti'){g.hand=Array.from({length:Number(options.players??3)},()=>g.stock.splice(0,Number(options.cards)||5));g.tip=g.stock.pop();g.wild=options.wild==='none'?0:options.wild==='same'?g.tip.r:g.tip.r===2?14:g.tip.r-1;g.message='Draw a card. Declare Jut when every card is paired.';}
+ else if(type==='jutpatti'){g.hand=Array.from({length:Number(options.players??3)},()=>g.stock.splice(0,Number(options.cards)||5));g.tip=g.stock.pop();g.wild=jutpattiWild(g.tip.r,g.hand.length,options.wild??'auto');g.message='Draw a card. Declare Jut when every card is paired.';}
  else if(type==='dhumbal'){g.hand=Array.from({length:Number(options.players??3)},()=>g.stock.splice(0,5));g.pile.push(g.stock.pop());g.message='Draw, then discard one card or a matching set. Call before drawing.';}
  g.scores=g.hand.map(()=>0);return g;
 }
