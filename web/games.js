@@ -1,3 +1,4 @@
+import {beginKittiShowdown,revealKittiSet} from './kitti-showdown.js';
 import {playerName} from './core.js';
 import {deck,shuffle,legalCards,trickWinner,callScore,callDealConfig,threeRank,compare,isJut,dhumbalScore} from './core.js';
 import {newMarriage} from './marriage.js';
@@ -34,7 +35,7 @@ export function botDrawTurn(g){if(g.over||g.turn===0)return;const p=g.turn;
  let source='stock';const top=g.pile.at(-1);
  if(top){if(g.type==='jutpatti'&&(top.r===g.wild||g.hand[p].some(c=>c.r===top.r)))source='pile';if(g.type==='dhumbal'&&cardValue(top,g.options)<=2)source='pile';}
  draw(g,p,source);
- if(g.type==='jutpatti'&&isJut(g.hand[p],g.wild)){g.over=true;g.scores=g.hand.map((_,i)=>i===p?1:0);g.message=`${playerName(g,p)} declared Jut.`;return;}
+ if(g.type==='jutpatti'&&isJut(g.hand[p],g.wild)){g.over=true;g.winner=p;g.scores=g.hand.map((_,i)=>i===p?1:0);g.message=`${playerName(g,p)} declared Jut.`;return;}
  const allowed=g.hand[p].filter(c=>c.id!==g.taken);let drop;
  if(g.type==='dhumbal'){const sets=allowed.map(c=>allowed.filter(x=>x.r===c.r));sets.sort((a,b)=>handTotal(b,g.options)-handTotal(a,g.options));drop=sets[0];}
  else {const counts={};g.hand[p].forEach(c=>counts[c.r]=(counts[c.r]||0)+1);drop=[allowed.sort((a,b)=>((a.r===g.wild?100:counts[a.r]%2===0?20:0)-(b.r===g.wild?100:counts[b.r]%2===0?20:0))||b.r-a.r)[0]];}
@@ -48,7 +49,7 @@ function bestSplit(cards,lowBest){let best=null,bestValue=-Infinity;
  for(const a of combos(cards)){const rem=cards.filter(c=>!a.includes(c));for(const b of combos(rem)){const c=rem.filter(x=>!b.includes(x));const groups=[a,b,c].sort((x,y)=>compare(threeRank(y,lowBest),threeRank(x,lowBest)));const weights=[1,2,1];const value=groups.reduce((sum,h,i)=>{const r=threeRank(h,lowBest);return sum+weights[i]*(r[0]*20+r[1]);},0);if(value>bestValue){best=groups;bestValue=value;}}}return best;
 }
 export function addKittiGroup(g,ids){if(g.phase!=='split'||g.over)throw Error('This deal is finished.');if(ids.length!==3)throw Error('Select exactly three cards.');const used=g.groups.flat().map(c=>c.id);const cards=g.hand[0].filter(c=>ids.includes(c.id)&&!used.includes(c.id));if(cards.length!==3)throw Error('Choose three unused cards.');g.groups.push(cards);g.selected=[];if(g.groups.length<3){g.message=`Select three cards for hand ${g.groups.length+1}.`;return;}
- const low=g.options.aceLowBest||false;const all=[g.groups.sort((a,b)=>compare(threeRank(b,low),threeRank(a,low))),...g.hand.slice(1).map(h=>bestSplit(h,low))];return resolveKitti(g,all);
+ const low=g.options.aceLowBest||false;const all=[g.groups.sort((a,b)=>compare(threeRank(b,low),threeRank(a,low))),...g.hand.slice(1).map(h=>bestSplit(h,low))];return beginKittiShowdown(g,all);
 }
 export function resolveKitti(g,all){const low=g.options.aceLowBest||false;g.allGroups=all;
  const four=g.hand.map(h=>Math.max(...h.map(c=>h.filter(x=>x.r===c.r).length))>=4?h.find(c=>h.filter(x=>x.r===c.r).length===4).r:0);
@@ -57,3 +58,5 @@ export function resolveKitti(g,all){const low=g.options.aceLowBest||false;g.allG
  g.winner=winner;g.showingWinners=wins;g.scores=g.hand.map(()=>0);if(winner!==null)g.scores[winner]=1;g.over=true;g.phase='result';
 }
 export function revealFaras(g){const ranks=g.hand.map(h=>threeRank(h,g.options.aceLowBest??true));let best=[0];for(let p=1;p<3;p++){const c=compare(ranks[p],ranks[best[0]]);if(c>0)best=[p];else if(!c)best.push(p);}g.scores=g.hand.map((_,p)=>best.includes(p)?1/best.length:0);g.over=true;g.message=best.length>1?'Tied best hands share one practice point.':`${playerName(g,best[0])} has the strongest hand.`;}
+
+export function advanceKitti(g,p=g.turn){return revealKittiSet(g,p,resolveKitti);}

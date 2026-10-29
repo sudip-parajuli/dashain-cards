@@ -1,6 +1,7 @@
+import {beginKittiShowdown,publicKittiSets} from '../web/kitti-showdown.js';
 import {economyRules,settleGameEconomy} from '../web/game-economy.js';
 import {friendGame,friendPlayerCount} from '../web/friends-games.js';
-import {newGame,drawHuman,discardHuman,declareHuman,playTrickCard,resolveKitti} from '../web/games.js';
+import {newGame,drawHuman,discardHuman,declareHuman,playTrickCard,resolveKitti,advanceKitti} from '../web/games.js';
 import {normalizeExposures,marriageDraw,marriageDiscard,showMarriage,finishMarriage} from '../web/marriage.js';
 import {daharPlay} from '../web/dahar.js';
 import {farasLook,farasAction} from '../web/faras.js';
@@ -8,9 +9,9 @@ import {integer,threeRank,compare} from '../web/core.js';
 import {settleTableChips} from '../web/table-chips.js';
 
 export function otherRules(options){
- const type=options.game,defaults={callbreak:{overtricks:true,roundLimit:5},dhumbal:{limit:5,penalty:25,faceValues:'ten',runs:false,jackZero:false},daharmara:{trump:'auto',teamCapture:false},kitti:{aceLowBest:false,anyTwo:false},faras:{boot:2,turnCap:18,aceLowBest:true},jutpatti:{cards:5,wild:'auto'}}[type];
+ const type=options.game,defaults={callbreak:{overtricks:true,roundLimit:5},dhumbal:{limit:5,penalty:25,faceValues:'ten',runs:false,jackZero:false},daharmara:{trump:'auto',teamCapture:false},kitti:{aceLowBest:false,anyTwo:false,revealDirection:'clockwise'},faras:{boot:2,turnCap:18,aceLowBest:true},jutpatti:{cards:5,wild:'auto'}}[type];
  if(!defaults)throw Error('Choose a supported game.');const rules={...defaults,winPoints:10};
- for(const [key,defaultValue] of Object.entries(rules))if(options[key]!==undefined){const v=options[key];if(typeof defaultValue==='boolean'){if(typeof v!=='boolean')throw Error('Invalid rule toggle.');rules[key]=v;}else if(typeof defaultValue==='number'){const bounds={roundLimit:[1,100],limit:[0,100],penalty:[0,1000],boot:[1,1000],turnCap:[3,100],winPoints:[1,1000],cards:[5,7]}[key];rules[key]=integer(Number(v),...bounds);if(key==='cards'&&![5,7].includes(rules[key]))throw Error('Choose five or seven cards.');}else{const allowed={faceValues:['ten','rank'],trump:['auto','S','H','D','C'],wild:['auto','above','below','same','none']}[key];if(!allowed.includes(v))throw Error('Invalid game rule.');rules[key]=v;}}
+ for(const [key,defaultValue] of Object.entries(rules))if(options[key]!==undefined){const v=options[key];if(typeof defaultValue==='boolean'){if(typeof v!=='boolean')throw Error('Invalid rule toggle.');rules[key]=v;}else if(typeof defaultValue==='number'){const bounds={roundLimit:[1,100],limit:[0,100],penalty:[0,1000],boot:[1,1000],turnCap:[3,100],winPoints:[1,1000],cards:[5,7]}[key];rules[key]=integer(Number(v),...bounds);if(key==='cards'&&![5,7].includes(rules[key]))throw Error('Choose five or seven cards.');}else{const allowed={revealDirection:['clockwise','anticlockwise'],faceValues:['ten','rank'],trump:['auto','S','H','D','C'],wild:['auto','above','below','same','none']}[key];if(!allowed.includes(v))throw Error('Invalid game rule.');rules[key]=v;}}
  if(rules.wild==='below')rules.wild='auto';return rules;
 }
 export function chipRules(options){const initialChips=integer(Number(options.initialChips??1000),1,1000000),chipValue=Number(options.chipValue??1);if(!Number.isFinite(chipValue)||chipValue<0||chipValue>100000||Math.abs(chipValue*100-Math.round(chipValue*100))>0.00001)throw Error('Choose a valid chip value.');return {initialChips,chipValue};}
@@ -18,7 +19,7 @@ export function roomType(r){return r.gameType||r.options.game||'marriage';}
 export function startMultiplayer(r){
  const type=roomType(r),n=friendPlayerCount(type,r.seats.length);r.players=n;r.options.players=n;r.totals=r.totals.slice(0,n);r.balances??=Array(n).fill(r.options.initialChips??1000);r.chipTotals??=Array(n).fill(0);r.balances=r.balances.slice(0,n);r.chipTotals=r.chipTotals.slice(0,n);
  const minimum=type==='faras'||r.options.economyVersion===2&&!['marriage','callbreak','dhumbal'].includes(type)?r.options.boot:1;if(r.balances.some(b=>b<minimum))throw Error('A player has insufficient table chips. This table is finished.');
- const g=newGame(type,type==='faras'?{...r.options,chips:r.options.initialChips,startingBalances:r.balances}:r.options);g.options={...r.options};g.turn=type==='daharmara'?0:r.round%n;g.openingSeat=g.turn;
+ const g=newGame(type,type==='faras'?{...r.options,chips:r.options.initialChips,startingBalances:r.balances}:r.options);g.options={...r.options};g.turn=type==='daharmara'?0:r.round%n;g.openingSeat=g.turn;g.dealer=(g.turn+n-1)%n;
  if(type==='kitti'){g.kittiGroups=g.hand.map(()=>[]);g.ready=g.hand.map(()=>false);}
  g.names=r.seats.map(s=>s.name);r.game=g;r.round++;
 }
@@ -26,7 +27,7 @@ function chooseBid(g,p,bid){if(g.phase!=='bid')throw Error('Bidding has finished
 function kittiMove(g,p,action){
  if(g.phase!=='split'||g.ready[p])throw Error('Your split is already submitted.');if(action.type==='resetgroups'){g.kittiGroups[p]=[];return;}
  const used=new Set(g.kittiGroups[p].flat().map(c=>c.id));if(action.ids.length!==3)throw Error('Select exactly three cards.');const cards=g.hand[p].filter(c=>action.ids.includes(c.id)&&!used.has(c.id));if(cards.length!==3)throw Error('Choose three unused cards.');g.kittiGroups[p].push(cards);
- if(g.kittiGroups[p].length===3){const low=g.options.aceLowBest;g.kittiGroups[p].sort((a,b)=>compare(threeRank(b,low),threeRank(a,low)));g.ready[p]=true;if(g.ready.every(Boolean))resolveKitti(g,g.kittiGroups);else do{g.turn=(g.turn+1)%g.hand.length;}while(g.ready[g.turn]);}
+ if(g.kittiGroups[p].length===3){const low=g.options.aceLowBest;g.kittiGroups[p].sort((a,b)=>compare(threeRank(b,low),threeRank(a,low)));g.ready[p]=true;if(g.ready.every(Boolean))beginKittiShowdown(g,g.kittiGroups);else do{g.turn=(g.turn+1)%g.hand.length;}while(g.ready[g.turn]);}
 }
 export function moveMultiplayer(g,p,action){
  const type=g.type;
@@ -44,7 +45,7 @@ export function moveMultiplayer(g,p,action){
  }else if(type==='faras'){
   if(action.type==='look')farasLook(g,p);else if(['bet','raise','show','fold'].includes(action.type))farasAction(g,p,action.type);else throw Error('Choose look, bet, raise, show or pack.');
  }else if(type==='kitti'){
-  if(!['group','resetgroups'].includes(action.type))throw Error('Split your hand into three groups.');kittiMove(g,p,action);
+  if(action.type==='reveal'){advanceKitti(g,p);return;}if(!['group','resetgroups'].includes(action.type))throw Error('Split your hand into three groups.');kittiMove(g,p,action);
  }else if(['dhumbal','jutpatti'].includes(type)){
   if(action.type==='draw'){if(!['stock','pile'].includes(action.source))throw Error('Invalid draw source.');drawHuman(g,action.source,p);}
   else if(action.type==='discard')discardHuman(g,action.ids,p);
@@ -68,17 +69,18 @@ export function settleMultiplayer(r){
 }
 export function multiplayerView(r,p){
  const g=r.game,n=g.hand.length;if(g.type==='marriage')normalizeExposures(g);const ownVisible=g.type!=='faras'||g.seen[p]||g.over;
- const view={type:g.type,options:g.options,hand:g.hand.map((h,i)=>(g.over||i===p&&ownVisible)?h.map(c=>({...c})):Array(h.length).fill(null)),stockCount:g.stock?.length??0,pile:g.pile?.length?[{...g.pile.at(-1)}]:[],tip:g.tip&&(g.type!=='marriage'||g.seen[p]||g.over)?{...g.tip}:null,exposed:(g.exposed||g.hand.map(()=>[])).map(h=>h.map(c=>({...c}))),turn:g.turn,phase:g.phase,over:g.over,scores:[...g.scores],selected:[],lastMove:g.lastMove||'',message:statusMessage(r),chipChanges:g.over?g.chipChanges:null};
+ const view={type:g.type,options:g.options,hand:g.hand.map((h,i)=>(g.over||i===p&&ownVisible)?h.map(c=>({...c})):Array(h.length).fill(null)),stockCount:g.stock?.length??0,pile:g.pile?.length?[{...g.pile.at(-1)}]:[],tip:g.tip&&(g.type!=='marriage'||g.seen[p]||g.over)?{...g.tip}:null,exposed:(g.exposed||g.hand.map(()=>[])).map(h=>h.map(c=>({...c}))),turn:g.turn,phase:g.phase,over:g.over,scores:[...g.scores],selected:[],winner:g.over?g.winner:null,winners:g.over?g.winners:null,teamWinner:g.over?g.teamWinner:null,lastMove:g.lastMove||'',message:statusMessage(r),chipChanges:g.over?g.chipChanges:null};
  if(g.type==='marriage')Object.assign(view,{seen:[...g.seen],tunnelas:(g.tunnelas||g.hand.map(()=>[])).map(groups=>groups.map(h=>h.map(c=>({...c})))),recentDiscards:g.recentDiscards||[],openingGroups:(g.openingGroups||g.hand.map(()=>[])).map(groups=>groups.map(h=>h.map(c=>({...c})))),maalDetails:g.over?g.maalDetails||null:null,pendingSeen:g.pendingSeen||Array(n).fill(false),mustFinish:!!g.mustFinish,dubleeMode:[...g.dubleeMode]});
  if(g.type==='callbreak')Object.assign(view,{bids:[...g.bids],tricks:[...g.tricks],deal:structuredClone(g.deal),trick:structuredClone(g.trick),lastTrick:structuredClone(g.lastTrick||[])});
  if(g.type==='daharmara')Object.assign(view,{trump:g.trump,trick:structuredClone(g.trick),lastTrick:structuredClone(g.lastTrick||[]),capturedTens:g.captured.map(h=>h.filter(c=>c.r===10).length),teamWinner:g.over?g.teamWinner:null,kot:!!g.kot});
- if(g.type==='kitti')Object.assign(view,{groups:structuredClone(g.kittiGroups[p]),ready:[...g.ready],allGroups:g.over?structuredClone(g.allGroups):null,showingWinners:g.over?g.showingWinners:null});
+ if(g.type==='kitti')Object.assign(view,{groups:structuredClone(g.kittiGroups[p]),ready:[...g.ready],allGroups:g.over?structuredClone(g.allGroups):null,showingWinners:g.over?g.showingWinners:null,showdown:g.showdown?structuredClone(g.showdown):null,showdownGroups:publicKittiSets(g)});
  if(g.type==='jutpatti')view.wild=g.wild;
  if(g.type==='faras')Object.assign(view,{seen:[...g.seen],active:[...g.active],bank:[...g.bank],startBank:[...g.startBank],start:g.start,pot:g.pot,stake:g.stake,contributions:[...g.contributions],betSequence:g.betSequence,actionLog:structuredClone(g.actionLog),lastBet:g.lastBet?{...g.lastBet}:null,lastPayout:g.over?structuredClone(g.lastPayout):null});
  return view;
 }
 function statusMessage(r){const g=r.game,name=p=>r.seats[p].name;
  if(g.over){if(g.type==='faras')return g.winners.map(name).join(' / ')+' won the pot.';if(g.type==='marriage'||g.type==='jutpatti')return name(g.winner)+' finished the deal.';if(g.type==='kitti')return g.winner===null?'Kitti: no winner this deal.':name(g.winner)+' won the deal.';if(g.type==='daharmara')return r.seats.filter((_,p)=>p%2===g.teamWinner).map(s=>s.name).join(' + ')+' won the team deal.';return 'Deal finished. Review the scores.';}
+ if(g.type==='kitti'&&g.phase==='showdown')return g.message;
  if(g.type==='daharmara')return name(g.turn)+' · Playing · Trump '+(g.trump||'undecided')+' · Tens '+g.captured.map(h=>h.filter(c=>c.r===10).length).join(' / ');
  return name(g.turn)+' · '+({draw:'Drawing',discard:'Discarding',bid:'Calling',play:'Playing',bet:'Betting',split:'Splitting cards'})[g.phase];
 }

@@ -31,7 +31,7 @@ export class RoomStore{
    const g=r.game;if(!g||g.over)throw Error('There is no active deal.');if(g.turn!==p&&!(g.type==='faras'&&action.type==='look'))throw Error('Wait for your turn.');
    if(['discard','group'].includes(action.type)||(g.type==='marriage'&&action.type==='show')){const ids=action.ids;if(!Array.isArray(ids)||ids.length>22||ids.some(id=>typeof id!=='string')||new Set(ids).size!==ids.length)throw Error('Choose valid cards.');}
    if(action.type==='play'&&(typeof action.id!=='string'||action.id.length>20))throw Error('Choose a card in your hand.');
-   moveMultiplayer(g,p,action);const verb={draw:action.source==='pile'?'took the discard':'drew from the stock',discard:'discarded',show:g.type==='faras'?'requested a show':'showed an opening',finish:'finished the deal',drawDiscard:'drew and discarded',play:'played a card',bid:'called '+action.bid,look:'looked at their cards',bet:'bet',raise:'raised',fold:'packed',group:'set a private hand',resetgroups:'reset their split'}[action.type];g.lastMove=r.seats[p].name+' '+verb+'.';
+   moveMultiplayer(g,p,action);const verb={draw:action.source==='pile'?'took the discard':'drew from the stock',discard:'discarded',show:g.type==='faras'?'requested a show':'showed an opening',finish:'finished the deal',drawDiscard:'drew and discarded',play:'played a card',bid:'called '+action.bid,look:'looked at their cards',bet:'bet',raise:'raised',fold:'packed',reveal:'revealed a Kitti set',group:'set a private hand',resetgroups:'reset their split'}[action.type];g.lastMove=r.seats[p].name+' '+verb+'.';
    if(g.over)settleMultiplayer(r);
   }
   r.revision++;r.updated=Date.now();return this.view(code,token);

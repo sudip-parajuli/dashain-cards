@@ -33,3 +33,7 @@ The production deployment configuration, provider sessions, signing keys and gen
 `play-preferences.js` resolves complete quick-play defaults without mutating stored or active rules. Game-default forms persist to the existing per-game options, and apply only when starting a new deal. Settings is available in the home navigation and as an in-table modal.
 
 `audio.js` loops the bundled user-supplied MP3 for background music and synthesizes card/game effects with Web Audio. Audio creation/resume is gesture-gated; background visibility and Android lifecycle events stop voices and scheduling. Audio preferences use the separate `dashain-audio-v1` local-storage key. Committed snapshot comparisons avoid replaying move/result sounds on sorting, polling or reload. The MP3 is bundled and cached for offline playback; no streaming music service is used.
+
+## Table presentation and Kitti showdown
+
+`table-experience.js` observes deal/result transitions independently from the engine, with bounded card-back flights and once-per-result celebration dialogs. It never clones concealed faces. `kitti-showdown.js` runs the turn-ordered three-showing state machine on both client and server. Only revealed sets are serialized in `showdownGroups`; full `allGroups` remains withheld until the deal ends. Shared balances settle only after the last reveal. Presentation caches do not change game scores.

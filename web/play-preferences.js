@@ -4,6 +4,6 @@ import {FRIEND_GAMES} from './friends-games.js';
 export function customLegacyPreset(saved={}){return saved.scoringProfile==='bhoos'?structuredClone({...BHOOS_MARRIAGE,...saved,scoringProfile:'classic',pointRules:saved.pointRules??pointDefaults('bhoos')}):saved;}
 export function playDefaults(type,saved={}){
  saved=customLegacyPreset(saved);const common={players:FRIEND_GAMES[type]?.default??4};
- const defaults={marriage:{...NEPAL_MARRIAGE,scoringProfile:'nepal',coinsPerPoint:5,coinBudget:500},callbreak:{overtricks:true,coinsPerPoint:1,coinBudget:500},dhumbal:{limit:5,penalty:25,faceValues:'ten',runs:false,jackZero:false,coinsPerPoint:1,coinBudget:500},daharmara:{trump:'auto',teamCapture:false,boot:10},kitti:{aceLowBest:false,anyTwo:false,boot:10},faras:{turnCap:18,aceLowBest:true},jutpatti:{cards:5,wild:'auto',boot:10}}[type];
+ const defaults={marriage:{...NEPAL_MARRIAGE,scoringProfile:'nepal',coinsPerPoint:5,coinBudget:500},callbreak:{overtricks:true,coinsPerPoint:1,coinBudget:500},dhumbal:{limit:5,penalty:25,faceValues:'ten',runs:false,jackZero:false,coinsPerPoint:1,coinBudget:500},daharmara:{trump:'auto',teamCapture:false,boot:10},kitti:{aceLowBest:false,anyTwo:false,boot:10,revealDirection:'clockwise'},faras:{turnCap:18,aceLowBest:true},jutpatti:{cards:5,wild:'auto',boot:10}}[type];
  if(!defaults)throw Error('Choose a supported game.');return structuredClone({...common,...defaults,...saved});
 }

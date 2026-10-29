@@ -62,3 +62,5 @@ Object.assign(NE,{
 
 Object.assign(NE,{'Sound test played.':'आवाज बजाइयो।','Audio is unavailable on this device.':'यो उपकरणमा आवाज उपलब्ध छैन।','Turn on game sounds to hear the test.':'परीक्षण सुन्न खेलको आवाज खोल्नुहोस्।','Tap again to enable audio.':'आवाज खोल्न फेरि ट्याप गर्नुहोस्।'});
 
+
+Object.assign(NE,{"WHAT A HAND!":"कस्तो राम्रो हात!","ONE MORE ROUND?":"अर्को एक खेल?","You won!":"तपाईंले जित्नुभयो!","A closely fought draw":"बराबरी भयो","Good cards. Better company.":"राम्रो पत्ती। अझ राम्रो साथ।","Shuffle up and try again.":"फेरि मिसाएर खेलौँ।","See round scores":"राउन्डको अंक हेर्नुहोस्","Back to table":"टेबलमा फर्कनुहोस्","Shuffling…":"पत्ती मिसाउँदै…","Dealing cards…":"पत्ती बाँड्दै…","Skip animation":"एनिमेसन छोड्नुहोस्","Highest":"सबैभन्दा बलियो","Middle":"मध्यम","Lowest":"सबैभन्दा कमजोर","Reveal my set":"मेरो सेट देखाउनुहोस्","Lead next showing":"अर्को सेट देखाउनुहोस्","Reveal direction":"देखाउने दिशा","Clockwise":"घडीको दिशामा","Anti-clockwise":"घडीको उल्टो दिशामा","Select 3 cards":"३ पत्ती छान्नुहोस्","Build your three hands":"तीन सेट मिलाउनुहोस्","Not revealed":"देखाइएको छैन","Showing complete":"सबैले देखाए"});
