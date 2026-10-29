@@ -1,6 +1,6 @@
 # Play release preparation — 29 October 2026
 
-Package: `com.dashaincards.app`. Current version 1.7.0, version code 34. Android 8+ (min SDK 26), compile/target SDK 36. The first internal release was published on 29 October 2026 and Play Console reports it active and available to internal testers. Tester membership is managed in Play Console. Public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
+Package: `com.dashaincards.app`. Current version 1.7.1, version code 35. Android 8+ (min SDK 26), compile/target SDK 36. The first internal release was published on 29 October 2026 and Play Console reports it active and available to internal testers. Tester membership is managed in Play Console. Public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
 
 ## Build and verification
 
@@ -41,3 +41,13 @@ Code 34 adds shuffle/distribution animations and winner celebrations with sound 
 Version 1.7.0 AAB SHA-256: `75018ac805c0be2cc0a4603804675fd7967e60022b9cd74e9907807cffeac65a`.
 
 Play Console confirmed version 1.7.0 active and available to internal testers on 29 October 2026. The same internal opt-in link and tester list continue to apply. The only Play warning is the optional deobfuscation file for this unminified build. Physical-device feedback remains part of the internal test.
+
+## Version 1.7.1 update
+
+Code 35 replaces the separate Kitti split panels with one compact nine-card hand. Choosing two sets automatically assigns the final three cards. Players drag a complete set onto the table; tapping and keyboard activation remain available. Revealed cards collect toward the showing winner before the final celebration. Indexed reveal actions reject attempts to play a later set.
+
+All 167 automated tests and actual local workerd/WebSocket checks passed. A disposable two-player room on the deployed service verified automatic third-set creation, indexed reveals, validation and final settlement. Browser checks covered portrait, landscape, whole-set dragging and winner collection. Release lint has zero errors, bundletool validates the signed AAB, and recursive APK asset hashes match source.
+
+Version 1.7.1 AAB SHA-256: `D28FB2E9CC691C1AE9FED6E4A4632163BDB414E889FDC78EFDE2E5693B0859CE`.
+
+Play Console confirmed version 1.7.1 active and available to internal testers on 29 October 2026. The existing opt-in link and tester list continue to apply. The only Play warning is the optional deobfuscation file for this unminified build. Physical-device feedback remains part of internal testing.
