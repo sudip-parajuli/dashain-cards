@@ -59,3 +59,6 @@ Code 36 enlarges Kitti hand cards from the former 34–39 px widths to responsiv
 The 167-test suite passed. Browser fixtures use the actual game renderer and card artwork: all seven hands were checked at 320 × 568, 568 × 320, 390 × 844 and 844 × 390. Kitti was also inspected on a desktop viewport. The two small-screen clipping issues found during inspection were corrected and rechecked. No physical Android device was attached. Signed build, full lint, bundletool and recursive APK asset hash verification passed.
 
 Version 1.7.2 AAB SHA-256: `21B73F18AFD492736BA7072D340CFF0C3D290B6DB1A2FF0C2723A9D7781BFD9D`.
+
+Play Console confirmed version 1.7.2 active and available to internal testers on 29 October 2026. The existing tester link applies. The only Play warning remains the optional deobfuscation file for the unminified build. GitHub CI passed and the final live sizing stylesheet was verified.
+
