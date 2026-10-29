@@ -62,4 +62,3 @@ Object.assign(NE,{
 
 Object.assign(NE,{'Sound test played.':'आवाज बजाइयो।','Audio is unavailable on this device.':'यो उपकरणमा आवाज उपलब्ध छैन।','Turn on game sounds to hear the test.':'परीक्षण सुन्न खेलको आवाज खोल्नुहोस्।','Tap again to enable audio.':'आवाज खोल्न फेरि ट्याप गर्नुहोस्।'});
 
-Object.assign(NE,{'Dashain Dhun · Mangal Dhun-inspired':'दशैं धुन · मंगल धुनबाट प्रेरित'});

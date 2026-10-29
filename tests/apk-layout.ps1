@@ -4,9 +4,10 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 $archive = [IO.Compression.ZipFile]::OpenRead([IO.Path]::GetFullPath($ApkPath))
 try {
     foreach ($entry in $archive.Entries) { if ($entry.FullName.Contains('\')) { throw "Android cannot resolve Windows APK entry: $($entry.FullName)" } }
-    $webRoot = Join-Path $PSScriptRoot '..\web'
-    foreach ($file in (Get-ChildItem -LiteralPath $webRoot -File)) {
-        $entry = $archive.GetEntry('assets/public/' + $file.Name)
+    $webRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\web')).Path
+    foreach ($file in (Get-ChildItem -LiteralPath $webRoot -File -Recurse)) {
+        $relative = $file.FullName.Substring($webRoot.Length).TrimStart('\','/').Replace('\','/')
+        $entry = $archive.GetEntry('assets/public/' + $relative)
         if (-not $entry -or $entry.Length -eq 0) { throw "Missing or empty bundled asset: $($file.Name)" }
         $stream = $entry.Open()
         $hash = [Security.Cryptography.SHA256]::Create()

@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
                 if (path == null || !path.startsWith("/assets/public/") || path.contains("..")) return null;
                 try {
                     String asset = path.substring("/assets/".length());
-                    String mime = asset.endsWith(".js") ? "text/javascript" : asset.endsWith(".css") ? "text/css" : asset.endsWith(".svg") ? "image/svg+xml" : asset.endsWith(".json") ? "application/json" : asset.endsWith(".ttf") ? "font/ttf" : "text/html";
+                    String mime = asset.endsWith(".js") ? "text/javascript" : asset.endsWith(".css") ? "text/css" : asset.endsWith(".svg") ? "image/svg+xml" : asset.endsWith(".json") ? "application/json" : asset.endsWith(".mp3") ? "audio/mpeg" : asset.endsWith(".ttf") ? "font/ttf" : "text/html";
                     return new WebResourceResponse(mime, "UTF-8", getAssets().open(asset));
                 } catch (IOException e) {
                     android.util.Log.e("DashainCards", "Missing bundled asset: " + path, e);

@@ -12,6 +12,4 @@ Court artwork is project SVG code. No third-party APKs, tool binaries or reverse
 
 ## Music and sound
 
-The background score and game cues are original procedural compositions synthesized by `web/audio.js`; no third-party recording or sample is bundled.
-
-Dashain Dhun is an original Mangal/Malashree-inspired arrangement. Its reed/drone/drum voices and paper-card effects are synthesized; no external recording is copied or bundled.
+`web/audio/the-auspicious-call.mp3` was supplied by the project owner as The_Auspicious_Call.mp3 for use as the default background track. No authorship or public-domain claim is made here. Its distribution rights should be retained with the publisher's release records. Card handling and game cues are synthesized by `web/audio.js`.

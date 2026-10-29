@@ -119,3 +119,7 @@ Marriage landscape fills the available viewport, reserves a separate full-width 
 ## Version 1.6.0
 
 In-app privacy, professional incoming support address, unified custom rules without third-party preset branding, strict shared-score rule validation, secure deck randomness, HTTPS-only release builds, and per-room real-time infrastructure. See [security review](docs/SECURITY_REVIEW.md) and [capacity assessment](docs/CAPACITY.md) for verification and limits.
+
+## Version 1.6.1
+
+The supplied The Auspicious Call recording is the default looping background music, bundled for offline web/Android playback. Settings keeps music controls without the previous descriptive caption. Existing mute and volume preferences are preserved.
