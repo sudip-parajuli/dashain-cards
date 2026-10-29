@@ -70,7 +70,7 @@ npm test
 npm run build
 ```
 
-The current suite contains 164 tests covering rules, settlements, hidden-card boundaries, stale actions, live scores, durable restarts and animation transitions. Building copies `web/` to `dist/` and the Android assets folder; generated copies are intentionally untracked.
+The current suite contains 167 tests covering rules, settlements, hidden-card boundaries, stale actions, live scores, durable restarts and animation transitions. Building copies `web/` to `dist/` and the Android assets folder; generated copies are intentionally untracked.
 
 See [Android setup](docs/ANDROID.md) for the debug APK, and [architecture](docs/ARCHITECTURE.md) for the project structure.
 
@@ -127,3 +127,7 @@ The supplied The Auspicious Call recording is the default looping background mus
 ## Version 1.7.0
 
 Every game now opens with a shuffle/deal sequence and celebrates completed deals with a winner overlay and sound. Jutpatti centres its stock with a face-up indicator partly beneath it, Faras moves its controls beside the hand, and Kitti groups cards in the hand area before three turn-based showings. New Kitti rooms require all players to update to this version. Reveals start beside the dealer in the configured direction; the first showing’s winning seat leads the remaining showings (ties use the first tied seat in reveal order). Existing Kitti overall scoring is unchanged, with settlement deferred until the final reveal. Reduced-motion and sound preferences are respected.
+
+## Version 1.7.1
+
+Kitti now keeps a single hand with separated three-card bundles. Choose two sets; the final three cards form the last set automatically. Drag the eligible bundle onto the table to reveal it (tapping or keyboard activation is an accessible alternative). Revealed sets leave the hand, and each completed showing animates the public cards toward its winner before the final celebration. Online reveals validate the selected set index and preserve hidden-set privacy.

@@ -1,4 +1,4 @@
-import {beginKittiShowdown,publicKittiSets} from '../web/kitti-showdown.js';
+import {beginKittiShowdown,publicKittiSets,completeKittiSplit} from '../web/kitti-showdown.js';
 import {economyRules,settleGameEconomy} from '../web/game-economy.js';
 import {friendGame,friendPlayerCount} from '../web/friends-games.js';
 import {newGame,drawHuman,discardHuman,declareHuman,playTrickCard,resolveKitti,advanceKitti} from '../web/games.js';
@@ -26,7 +26,7 @@ export function startMultiplayer(r){
 function chooseBid(g,p,bid){if(g.phase!=='bid')throw Error('Bidding has finished.');const max=g.deal.totalTricks;if(!Number.isInteger(bid))throw Error('Choose a whole-number call.');integer(bid,1,max);if(g.bids[p])throw Error('Your call is already recorded.');g.bids[p]=bid;if(g.bids.every(Boolean)){g.phase='play';g.turn=g.openingSeat;}else do{g.turn=(g.turn+1)%g.hand.length;}while(g.bids[g.turn]);}
 function kittiMove(g,p,action){
  if(g.phase!=='split'||g.ready[p])throw Error('Your split is already submitted.');if(action.type==='resetgroups'){g.kittiGroups[p]=[];return;}
- const used=new Set(g.kittiGroups[p].flat().map(c=>c.id));if(action.ids.length!==3)throw Error('Select exactly three cards.');const cards=g.hand[p].filter(c=>action.ids.includes(c.id)&&!used.has(c.id));if(cards.length!==3)throw Error('Choose three unused cards.');g.kittiGroups[p].push(cards);
+ const used=new Set(g.kittiGroups[p].flat().map(c=>c.id));if(action.ids.length!==3)throw Error('Select exactly three cards.');const cards=g.hand[p].filter(c=>action.ids.includes(c.id)&&!used.has(c.id));if(cards.length!==3)throw Error('Choose three unused cards.');g.kittiGroups[p].push(cards);g.kittiGroups[p]=completeKittiSplit(g.hand[p],g.kittiGroups[p]);
  if(g.kittiGroups[p].length===3){const low=g.options.aceLowBest;g.kittiGroups[p].sort((a,b)=>compare(threeRank(b,low),threeRank(a,low)));g.ready[p]=true;if(g.ready.every(Boolean))beginKittiShowdown(g,g.kittiGroups);else do{g.turn=(g.turn+1)%g.hand.length;}while(g.ready[g.turn]);}
 }
 export function moveMultiplayer(g,p,action){
@@ -45,7 +45,7 @@ export function moveMultiplayer(g,p,action){
  }else if(type==='faras'){
   if(action.type==='look')farasLook(g,p);else if(['bet','raise','show','fold'].includes(action.type))farasAction(g,p,action.type);else throw Error('Choose look, bet, raise, show or pack.');
  }else if(type==='kitti'){
-  if(action.type==='reveal'){advanceKitti(g,p);return;}if(!['group','resetgroups'].includes(action.type))throw Error('Split your hand into three groups.');kittiMove(g,p,action);
+  if(action.type==='reveal'){advanceKitti(g,p,action.set);return;}if(!['group','resetgroups'].includes(action.type))throw Error('Split your hand into three groups.');kittiMove(g,p,action);
  }else if(['dhumbal','jutpatti'].includes(type)){
   if(action.type==='draw'){if(!['stock','pile'].includes(action.source))throw Error('Invalid draw source.');drawHuman(g,action.source,p);}
   else if(action.type==='discard')discardHuman(g,action.ids,p);

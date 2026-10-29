@@ -38,15 +38,32 @@ function deal(g,viewer,root,audio,onDone){
  }
  audio.play('deal',.55);setTimeout(()=>{if(intro)intro.querySelector('strong').textContent='Dealing cards…';},600);timer=setTimeout(end,950+plan.length*step);
 }
+export function hasNewKittiCollection(g,previousWins=0){const s=g.showdown,wins=s?.roundWinners.length||0;return !!s&&wins>previousWins&&wins===s.round+1&&s.revealed.length===g.hand.length;}
+function collectKitti(g,viewer,root,audio,reduced){
+ const winners=g.showdown.roundWinners.at(-1),cards=[...root.querySelectorAll('.showdown-player .playing-card')];
+ if(reduced){for(const card of cards)card.style.opacity='0';return;}
+ for(const [i,card]of cards.entries()){
+  const winner=winners[Math.floor(i/3)%winners.length],target=winner===viewer?root.querySelector('.hand-area'):root.querySelector(`[data-seat="${winner}"]`);if(!target)continue;
+  const from=card.getBoundingClientRect(),to=target.getBoundingClientRect(),ghost=card.cloneNode(true);ghost.classList.add('kitti-won-flight');ghost.setAttribute('aria-hidden','true');ghost.removeAttribute('data-action');
+  Object.assign(ghost.style,{left:from.x+'px',top:from.y+'px',width:from.width+'px',height:from.height+'px'});document.body.append(ghost);
+  const dx=to.x+to.width/2-from.x-from.width/2,dy=to.y+to.height/2-from.y-from.height/2,delay=650+i*16;
+  card.animate([{opacity:1},{opacity:0}],{delay,duration:100,fill:'forwards'});
+  const flight=ghost.animate([{transform:'translate(0,0)',opacity:1},{transform:`translate(${dx*.45}px,${dy*.45-30}px) rotate(12deg)`,offset:.5},{transform:`translate(${dx}px,${dy}px) rotate(-5deg) scale(.6)`,opacity:0}],{delay,duration:600,easing:'cubic-bezier(.3,.1,.3,1)',fill:'both'});flight.finished.then(()=>ghost.remove(),()=>ghost.remove());
+ }
+ audio.play('deal',.8);
+}
 export function animateTableExperience(g,viewer,root,audio,roomKey,onDone){
- const cache=roomKey?online:local,key=roomKey||g,before=cache.get(key);cache.set(key,{over:g.over,reveal:g.showdown?g.showdown.round+':'+g.showdown.revealed.length:null});if(online.size>40)online.delete(online.keys().next().value);
+ const cache=roomKey?online:local,key=roomKey||g,before=cache.get(key),wins=g.showdown?.roundWinners.length||0,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ cache.set(key,{over:g.over,reveal:g.showdown?g.showdown.round+':'+g.showdown.revealed.length:null,wins});if(online.size>40)online.delete(online.keys().next().value);
+ const identity=String(roomKey||g.coinRound?.id||g.type),table=root.querySelector('.table-layout');if(table)table.dataset.dealPresentation=identity;
  if(intro&&g.over){intro.finish();celebration(g,viewer,root,audio);return;}
- if(intro){root.querySelector('.table-layout')?.setAttribute('inert','');return;}
- if(before&&g.showdown&&before.reveal!==g.showdown.round+':'+g.showdown.revealed.length&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const p=g.showdown.revealed.at(-1);for(const card of root.querySelectorAll(`[data-show-seat="${p}"] .playing-card`))card.animate([{transform:'rotateY(90deg)',opacity:.2},{transform:'rotateY(0)',opacity:1}],{duration:500,easing:'ease-out'});}
- if(before&&!before.over&&g.over){celebration(g,viewer,root,audio);return;}
+ if(intro){table?.setAttribute('inert','');return;}
+ if(before&&g.showdown&&before.reveal!==g.showdown.round+':'+g.showdown.revealed.length&&!reduced){const p=g.showdown.revealed.at(-1);for(const card of root.querySelectorAll(`[data-show-seat="${p}"] .playing-card`))card.animate([{transform:'rotateY(90deg)',opacity:.2},{transform:'rotateY(0)',opacity:1}],{duration:500,easing:'ease-out'});}
+ const collecting=!!before&&hasNewKittiCollection(g,before.wins||0);
+ if(collecting)collectKitti(g,viewer,root,audio,reduced);else if(g.showdown?.awaitingNext||g.over&&g.showdown)for(const card of root.querySelectorAll('.showdown-player .playing-card'))card.style.opacity='0';
+ if(before&&!before.over&&g.over){if(collecting&&!reduced)setTimeout(()=>{if(root.querySelector('.table-layout')?.dataset.dealPresentation===identity&&root.querySelector('#table-result'))celebration(g,viewer,root,audio);},1650);else celebration(g,viewer,root,audio);return;}
  if(before||g.over)return;const id=roomKey||g.coinRound?.id||g;
  if(dealt.has(id))return;dealt.add(id);if(dealt.size>80)dealt.delete(dealt.values().next().value);try{sessionStorage.setItem('dashain-deal-motion',JSON.stringify([...dealt].filter(x=>typeof x==='string')));}catch{}
- // A reload/reconnect to a progressed deal should not play a fresh distribution.
  if((g.groups?.length||0)>0||(g.steps||0)>0||(g.pile?.length||0)>1||g.showdown||g.type==='callbreak'&&g.phase!=='bid'||g.type==='faras'&&(g.actionLog?.length||0)>0)return;
  deal(g,viewer,root,audio,onDone);
 }

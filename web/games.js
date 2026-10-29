@@ -1,4 +1,4 @@
-import {beginKittiShowdown,revealKittiSet} from './kitti-showdown.js';
+import {beginKittiShowdown,revealKittiSet,completeKittiSplit} from './kitti-showdown.js';
 import {playerName} from './core.js';
 import {deck,shuffle,legalCards,trickWinner,callScore,callDealConfig,threeRank,compare,isJut,dhumbalScore} from './core.js';
 import {newMarriage} from './marriage.js';
@@ -48,7 +48,7 @@ function bestSplit(cards,lowBest){let best=null,bestValue=-Infinity;
  function combos(a){const out=[];for(let i=0;i<a.length;i++)for(let j=i+1;j<a.length;j++)for(let k=j+1;k<a.length;k++)out.push([a[i],a[j],a[k]]);return out;}
  for(const a of combos(cards)){const rem=cards.filter(c=>!a.includes(c));for(const b of combos(rem)){const c=rem.filter(x=>!b.includes(x));const groups=[a,b,c].sort((x,y)=>compare(threeRank(y,lowBest),threeRank(x,lowBest)));const weights=[1,2,1];const value=groups.reduce((sum,h,i)=>{const r=threeRank(h,lowBest);return sum+weights[i]*(r[0]*20+r[1]);},0);if(value>bestValue){best=groups;bestValue=value;}}}return best;
 }
-export function addKittiGroup(g,ids){if(g.phase!=='split'||g.over)throw Error('This deal is finished.');if(ids.length!==3)throw Error('Select exactly three cards.');const used=g.groups.flat().map(c=>c.id);const cards=g.hand[0].filter(c=>ids.includes(c.id)&&!used.includes(c.id));if(cards.length!==3)throw Error('Choose three unused cards.');g.groups.push(cards);g.selected=[];if(g.groups.length<3){g.message=`Select three cards for hand ${g.groups.length+1}.`;return;}
+export function addKittiGroup(g,ids){if(g.phase!=='split'||g.over)throw Error('This deal is finished.');if(ids.length!==3)throw Error('Select exactly three cards.');const used=g.groups.flat().map(c=>c.id);const cards=g.hand[0].filter(c=>ids.includes(c.id)&&!used.includes(c.id));if(cards.length!==3)throw Error('Choose three unused cards.');g.groups.push(cards);g.groups=completeKittiSplit(g.hand[0],g.groups);g.selected=[];if(g.groups.length<3){g.message=`Select three cards for hand ${g.groups.length+1}.`;return;}
  const low=g.options.aceLowBest||false;const all=[g.groups.sort((a,b)=>compare(threeRank(b,low),threeRank(a,low))),...g.hand.slice(1).map(h=>bestSplit(h,low))];return beginKittiShowdown(g,all);
 }
 export function resolveKitti(g,all){const low=g.options.aceLowBest||false;g.allGroups=all;
@@ -59,4 +59,4 @@ export function resolveKitti(g,all){const low=g.options.aceLowBest||false;g.allG
 }
 export function revealFaras(g){const ranks=g.hand.map(h=>threeRank(h,g.options.aceLowBest??true));let best=[0];for(let p=1;p<3;p++){const c=compare(ranks[p],ranks[best[0]]);if(c>0)best=[p];else if(!c)best.push(p);}g.scores=g.hand.map((_,p)=>best.includes(p)?1/best.length:0);g.over=true;g.message=best.length>1?'Tied best hands share one practice point.':`${playerName(g,best[0])} has the strongest hand.`;}
 
-export function advanceKitti(g,p=g.turn){return revealKittiSet(g,p,resolveKitti);}
+export function advanceKitti(g,p=g.turn,setIndex){return revealKittiSet(g,p,resolveKitti,setIndex);}

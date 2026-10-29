@@ -37,3 +37,5 @@ The production deployment configuration, provider sessions, signing keys and gen
 ## Table presentation and Kitti showdown
 
 `table-experience.js` observes deal/result transitions independently from the engine, with bounded card-back flights and once-per-result celebration dialogs. It never clones concealed faces. `kitti-showdown.js` runs the turn-ordered three-showing state machine on both client and server. Only revealed sets are serialized in `showdownGroups`; full `allGroups` remains withheld until the deal ends. Shared balances settle only after the last reveal. Presentation caches do not change game scores.
+
+Kitti split completion uses the same `completeKittiSplit` helper offline and online. The UI renders assigned bundles and unassigned cards in one hand; it does not duplicate held cards into separate panels. Gestures carry the bundle index into the existing authorized reveal action; the server checks it against the next showing. Collection flights clone only already-public table faces and never affect scoring.

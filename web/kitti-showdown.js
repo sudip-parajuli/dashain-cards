@@ -5,9 +5,12 @@ export function beginKittiShowdown(g,all){
  g.showdown={round:0,lead:start,firstLeader:null,order:Array.from({length:n},(_,i)=>(start+i*direction+n*2)%n),revealed:[],roundWinners:[],awaitingNext:false,direction};
  g.phase='showdown';g.turn=start;g.selected=[];g.message='Showdown · Highest hands first. Reveal order starts with '+playerName(g,start)+'.';
 }
-export function revealKittiSet(g,p,finish){
+export function completeKittiSplit(hand,sets){if(sets.length!==2)return sets;const used=new Set(sets.flat().map(c=>c.id)),remaining=hand.filter(c=>!used.has(c.id));if(used.size!==6||remaining.length!==3)throw Error('Choose two separate sets of three cards.');return [...sets,remaining];}
+export function nextKittiSet(g){return g.showdown?g.showdown.round+(g.showdown.awaitingNext?1:0):null;}
+export function heldKittiSets(g,p,sets){if(!g.showdown)return sets.map((cards,index)=>({cards,index}));return sets.map((cards,index)=>({cards,index})).filter(({index})=>index>g.showdown.round||index===g.showdown.round&&!g.showdown.revealed.includes(p));}
+export function revealKittiSet(g,p,finish,setIndex){
  if(g.over||g.phase!=='showdown'||g.turn!==p||!g.showdown)throw Error('Wait for your reveal turn.');
- const s=g.showdown,n=g.hand.length;
+ const s=g.showdown,n=g.hand.length;if(setIndex!==undefined&&(!Number.isInteger(setIndex)||setIndex!==nextKittiSet(g)))throw Error('Reveal your next set in order.');
  if(s.awaitingNext){s.round++;s.lead=s.firstLeader;s.order=Array.from({length:n},(_,i)=>(s.lead+i*s.direction+n*2)%n);s.revealed=[];s.awaitingNext=false;}
  s.revealed.push(p);
  if(s.revealed.length<n){g.turn=s.order[s.revealed.length];g.message='Showing '+(s.round+1)+' · '+playerName(g,g.turn)+' reveals next.';return;}
