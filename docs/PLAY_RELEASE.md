@@ -1,6 +1,6 @@
 # Play release preparation — 29 October 2026
 
-Package: `com.dashaincards.app`. Current version 1.7.2, version code 36. Android 8+ (min SDK 26), compile/target SDK 36. The first internal release was published on 29 October 2026 and Play Console reports it active and available to internal testers. Tester membership is managed in Play Console. Public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
+Package: `com.dashaincards.app`. Current version 1.7.3, version code 37. Android 8+ (min SDK 26), compile/target SDK 36. The first internal release was published on 29 October 2026 and Play Console reports it active and available to internal testers. Tester membership is managed in Play Console. Public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
 
 ## Build and verification
 
@@ -62,3 +62,15 @@ Version 1.7.2 AAB SHA-256: `21B73F18AFD492736BA7072D340CFF0C3D290B6DB1A2FF0C2723
 
 Play Console confirmed version 1.7.2 active and available to internal testers on 29 October 2026. The existing tester link applies. The only Play warning remains the optional deobfuscation file for the unminified build. GitHub CI passed and the final live sizing stylesheet was verified.
 
+
+## Version 1.7.3 update
+
+Code 37 keeps hand cards in their natural stacking order during selection and adds a deeper fan with a larger selection lift. Kitti bundles and remaining cards retain readable neighbouring indices. Landscape hand padding reserves room for the curved lower edges.
+
+Celebrations show the settled net coin/chip result, the other winner’s gain where available, and the returned boot separately for pooled games. Online chip values use the room’s configured rupee equivalent. An original synthesized victory cue combines a bass impact, applause texture, echo and a short reed fanfare; existing mute, volume and background lifecycle controls still apply.
+
+Offline celebrations offer Save & new deal. The table now has Round result and New deal; an unsaved round opens save, skip and cancel choices. Saving is guarded against duplicate clicks, and a persistence failure prevents proceeding to the next deal. Online rooms retain server-owned next-deal permissions and automatic table settlement.
+
+All 170 tests passed, including settled payouts and bounded audio samples. Browser checks covered selected cards across all seven games at four phone sizes, actual Kitti splitting/revealing, save-and-start with exactly one History entry, cancel/skip paths, and an actual Faras win showing its net coin gain. Full Android lint has zero errors; signed builds, bundletool and exact recursive APK asset hashes passed. No physical Android device was connected.
+
+Version 1.7.3 AAB SHA-256: `47B8562F51894E0B493B9511FF160CE2979FF0555209AA9161BC2E10D3E13248`.

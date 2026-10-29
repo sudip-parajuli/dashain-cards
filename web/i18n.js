@@ -68,3 +68,5 @@ Object.assign(NE,{"WHAT A HAND!":"कस्तो राम्रो हात!"
 Object.assign(NE,{"Drag your next set to the table":"आफ्नो अर्को सेट टेबलमा घिसार्नुहोस्","Choose two sets. The final three are automatic.":"दुई सेट छान्नुहोस्। अन्तिम तीन पत्तीको सेट आफैँ बन्छ।"});
 
 Object.assign(NE,{"Showdown complete":"सबै सेट देखाइयो"});
+
+Object.assign(NE,{'Save & new deal':'सुरक्षित गरेर नयाँ खेल','Your net winnings':'तपाईंको खुद जित','Your net result':'तपाईंको खुद नतिजा','Save this round?':'यो राउन्ड सुरक्षित गर्ने?','Keep the result in History before starting the next deal.':'नयाँ खेलअघि नतिजा इतिहासमा सुरक्षित राख्नुहोस्।','New deal without saving':'सुरक्षित नगरी नयाँ खेल'});
