@@ -1,6 +1,6 @@
 # Play release preparation — 29 October 2026
 
-Package: `com.dashaincards.app`. Version 1.6.1, version code 33. Android 8+ (min SDK 26), compile/target SDK 36. The first Play milestone is internal testing; public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
+Package: `com.dashaincards.app`. Version 1.6.1, version code 33. Android 8+ (min SDK 26), compile/target SDK 36. The first internal release was published on 29 October 2026 and Play Console reports it active and available to internal testers. Four approved testers are configured. Public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
 
 ## Build and verification
 
@@ -27,3 +27,9 @@ The owner authorized Play App Signing terms, policy/export declarations and conf
 Before a closed/public release, finish the store listing and app-content forms: privacy policy, Data Safety, ads (none currently), app access, audience and IARC content rating. Answer simulated-gambling questions accurately for Faras. Disclose optional online names, gameplay and shared scores consistent with the policy; do not simply claim no collection because offline play is available. Public policy: https://www.techwiredsolutions.com.np/dashaincards/privacy.html. Support: hello@techwiredsolutions.com.np.
 
 Internal testing does not satisfy the required closed-test period. The developer must recruit and retain the closed testers and keep feedback records; opting in and actual device use cannot be automated on their behalf. Free-tier backend limits are documented in CAPACITY.md and still apply.
+
+## Published internal release
+
+Join link: https://play.google.com/apps/internaltest/4701334246091521663. Only approved tester accounts can opt in. Google may temporarily display `com.dashaincards.app (unreviewed)` until app setup and review are complete. Distribution may take up to an hour or occasionally longer to propagate. This is an internal rollout, not approval for public production.
+
+Uploaded AAB SHA-256: `91e7d3788c19a4eee8b34fcc4ed3b73cd6e39d56f04097cb056093b0adc617e7`. Play accepted version code 33 / version 1.6.1 with no blocking errors. Its remaining optional warning is a missing deobfuscation file; this build does not minify or obfuscate.
