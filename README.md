@@ -70,7 +70,7 @@ npm test
 npm run build
 ```
 
-The current suite contains 158 tests covering rules, settlements, hidden-card boundaries, stale actions, live scores, durable restarts and animation transitions. Building copies `web/` to `dist/` and the Android assets folder; generated copies are intentionally untracked.
+The current suite contains 164 tests covering rules, settlements, hidden-card boundaries, stale actions, live scores, durable restarts and animation transitions. Building copies `web/` to `dist/` and the Android assets folder; generated copies are intentionally untracked.
 
 See [Android setup](docs/ANDROID.md) for the debug APK, and [architecture](docs/ARCHITECTURE.md) for the project structure.
 

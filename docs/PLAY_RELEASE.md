@@ -1,6 +1,6 @@
 # Play release preparation — 29 October 2026
 
-Package: `com.dashaincards.app`. Version 1.6.1, version code 33. Android 8+ (min SDK 26), compile/target SDK 36. The first internal release was published on 29 October 2026 and Play Console reports it active and available to internal testers. Four approved testers are configured. Public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
+Package: `com.dashaincards.app`. Current version 1.7.0, version code 34. Android 8+ (min SDK 26), compile/target SDK 36. The first internal release was published on 29 October 2026 and Play Console reports it active and available to internal testers. Tester membership is managed in Play Console. Public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
 
 ## Build and verification
 
@@ -33,3 +33,11 @@ Internal testing does not satisfy the required closed-test period. The developer
 Join link: https://play.google.com/apps/internaltest/4701334246091521663. Only approved tester accounts can opt in. Google may temporarily display `com.dashaincards.app (unreviewed)` until app setup and review are complete. Distribution may take up to an hour or occasionally longer to propagate. This is an internal rollout, not approval for public production.
 
 Uploaded AAB SHA-256: `91e7d3788c19a4eee8b34fcc4ed3b73cd6e39d56f04097cb056093b0adc617e7`. Play accepted version code 33 / version 1.6.1 with no blocking errors. Its remaining optional warning is a missing deobfuscation file; this build does not minify or obfuscate.
+
+## Version 1.7.0 update
+
+Code 34 adds shuffle/distribution animations and winner celebrations with sound to all seven games, centred Jutpatti stock/indicator presentation, Faras hand-area controls and staged Kitti reveals. The 164-test suite and actual local workerd/WebSocket checks passed, including hidden-set privacy and settlement after the third showing. The deployed service passed a disposable two-player Kitti smoke test. Release lint has zero errors, bundletool validates the AAB, and recursive APK asset hashes match source. New Kitti rooms should use updated clients on every device.
+
+Version 1.7.0 AAB SHA-256: `75018ac805c0be2cc0a4603804675fd7967e60022b9cd74e9907807cffeac65a`.
+
+Play Console confirmed version 1.7.0 active and available to internal testers on 29 October 2026. The same internal opt-in link and tester list continue to apply. The only Play warning is the optional deobfuscation file for this unminified build. Physical-device feedback remains part of the internal test.
