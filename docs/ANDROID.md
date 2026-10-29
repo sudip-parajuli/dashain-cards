@@ -24,6 +24,8 @@ The checked-in Gradle project targets SDK 36; install that platform to use the G
 
 The debug APK is not a Play Store artifact. Before publishing, create a Play developer account, configure secure release/upload signing, produce a release AAB, and complete the store listing, privacy/data declarations, content rating and required testing. Keep signing keys and passwords in a password manager or protected CI secret store, never in Git.
 
+The signed release workflow is now available in `scripts/build-release.ps1`. See [Play release preparation](PLAY_RELEASE.md) for the matching SDK/Gradle versions, verification, signing-key handling and testing requirements.
+
 Test rotation, cold/offline startup, app resume, import/export, drag and tap controls, shared-link joining and slow/disconnected multiplayer on physical devices before release.
 
 Audio release checks: verify music/effects volume and mute on a physical phone, then background/foreground the app and interrupt it with a file picker or another app. The native host dispatches pause/resume events to the audio engine as well as pausing/resuming its WebView.

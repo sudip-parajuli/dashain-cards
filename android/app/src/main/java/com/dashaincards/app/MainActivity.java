@@ -16,9 +16,14 @@ public class MainActivity extends Activity {
     private ValueCallback<Uri[]> chooser;
     private String exportText;
     private volatile String roomServer = "";
+    private android.window.OnBackInvokedCallback backCallback;
     private static final String ORIGIN = "https://appassets.androidplatform.net";
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            backCallback = this::handleBack;
+            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT, backCallback);
+        }
         roomServer = getPreferences(MODE_PRIVATE).getString("roomServer", "");
         web = new WebView(this);
         android.widget.FrameLayout container = new android.widget.FrameLayout(this);
@@ -162,7 +167,10 @@ public class MainActivity extends Activity {
             exportText = null;
         }
     }
-    @Override public void onBackPressed() { if (web.canGoBack()) web.goBack(); else new AlertDialog.Builder(this).setMessage("Close Dashain Cards? Your games and scores are saved.").setPositiveButton("Close",(d,w)->finish()).setNegativeButton("Stay",null).show(); }
+    private void handleBack() { if (web.canGoBack()) web.goBack(); else new AlertDialog.Builder(this).setMessage("Close Dashain Cards? Your games and scores are saved.").setPositiveButton("Close",(d,w)->finish()).setNegativeButton("Stay",null).show(); }
+    // Android 8–12 use the legacy callback; Android 13+ registers the platform dispatcher above.
+    @android.annotation.SuppressLint("GestureBackNavigation")
+    @Override public void onBackPressed() { handleBack(); }
     @Override protected void onPause() {
         if (web != null) { web.evaluateJavascript("document.dispatchEvent(new Event('dashainpause'))", null); web.onPause(); }
         super.onPause();
@@ -172,6 +180,6 @@ public class MainActivity extends Activity {
         updateTableBars();
         if (web != null) { web.onResume(); web.evaluateJavascript("document.dispatchEvent(new Event('dashainresume'))", null); }
     }
-    @Override protected void onDestroy() { web.removeJavascriptInterface("DashainNative"); web.destroy(); super.onDestroy(); }
+    @Override protected void onDestroy() { if (android.os.Build.VERSION.SDK_INT >= 33 && backCallback != null) getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(backCallback); web.removeJavascriptInterface("DashainNative"); web.destroy(); super.onDestroy(); }
 }
 
