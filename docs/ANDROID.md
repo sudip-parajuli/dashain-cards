@@ -27,3 +27,5 @@ The debug APK is not a Play Store artifact. Before publishing, create a Play dev
 Test rotation, cold/offline startup, app resume, import/export, drag and tap controls, shared-link joining and slow/disconnected multiplayer on physical devices before release.
 
 Audio release checks: verify music/effects volume and mute on a physical phone, then background/foreground the app and interrupt it with a file picker or another app. The native host dispatches pause/resume events to the audio engine as well as pausing/resuming its WebView.
+
+Landscape tables hide status/navigation bars while active; a system swipe reveals transient bars. Test rotation, display cutouts, gestures and bar restoration when leaving the table on a physical phone.

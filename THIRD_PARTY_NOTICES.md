@@ -13,3 +13,5 @@ Court artwork is project SVG code. No third-party APKs, tool binaries or reverse
 ## Music and sound
 
 The background score and game cues are original procedural compositions synthesized by `web/audio.js`; no third-party recording or sample is bundled.
+
+Dashain Dhun is an original Mangal/Malashree-inspired arrangement. Its reed/drone/drum voices and paper-card effects are synthesized; no external recording is copied or bundled.

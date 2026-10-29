@@ -24,3 +24,42 @@
 /* Short Jutpatti hands remain a single overlapping fan on wide tables. */
 @media(orientation:landscape) and (min-width:560px){.table-layout.game-jutpatti .my-hand{--jut-card-width:clamp(42px,calc((100dvh * .29 - 40px) * .714),90px);display:flex;justify-content:center;align-items:end;gap:0;padding:6px 20px 16px}.table-layout.game-jutpatti .my-hand .playing-card{width:var(--jut-card-width);max-width:none;max-height:none;height:auto;aspect-ratio:5/7;flex:0 0 var(--jut-card-width);margin:0;transform:translateY(var(--fan-lift,0px)) rotate(calc(var(--fan-angle,0deg) * 1.5))}.table-layout.game-jutpatti .my-hand .playing-card+*{margin-left:calc(var(--jut-card-width) * -.32)}.table-layout.game-jutpatti .my-hand .playing-card.selected,.table-layout.game-jutpatti .my-hand .playing-card:not(.selected):hover{transform:translateY(calc(var(--fan-lift,0px) - 12px)) rotate(calc(var(--fan-angle,0deg) * 1.5))}}
 .table-ground{pointer-events:none}.table-middle.drop-hover{outline:2px solid #ffcf91;background:#f6c3821a;border-radius:32px}
+/* Use the available screen, rather than a capped desktop canvas. */
+.is-playing .shell,.table-layout{max-width:none;width:100%}#game-picker{scroll-margin-top:12px}#game-picker:focus{outline:none}
+/* Seat captions may be subdued; the face of an exposed card must never be. */
+.exposed-hand .playing-card,.seat .public-melds .playing-card{background:#fffdf7;color:#14213b;opacity:1!important;border:1px solid #d5c9b3;box-shadow:none}
+.exposed-hand .playing-card.red,.seat .public-melds .playing-card.red{color:#b51632}
+.exposed-hand .playing-card .card-index,.seat .public-melds .playing-card .card-index{position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-weight:800;line-height:.93;font-size:14px;color:inherit!important;opacity:1}
+.exposed-hand .playing-card .card-index small,.seat .public-melds .playing-card .card-index small{font-size:.66em;color:inherit!important;line-height:1}
+.exposed-hand .playing-card .pip,.exposed-hand .playing-card .bottom{display:none}
+@media(orientation:landscape) and (min-width:560px){
+ .game-marriage{--marriage-hand:clamp(110px,29dvh,170px);grid-template-columns:minmax(0,1fr) 112px;grid-template-areas:"header header" "opponents opponents" "middle controls" "status controls" "hand hand";grid-template-rows:32px 60px minmax(94px,1fr) 22px var(--marriage-hand);gap:4px 10px}
+ .game-marriage.public-table{grid-template-rows:32px 104px minmax(94px,1fr) 22px var(--marriage-hand)}
+ .game-marriage:before{inset:72px 126px calc(var(--marriage-hand) + 30px) 12px}
+ .game-marriage .table-opponents{grid-area:opponents;align-items:center;justify-content:space-evenly;max-height:none;overflow-x:auto;overflow-y:hidden;padding:3px;gap:7px}
+ .game-marriage .table-opponents .seat{flex:0 1 auto;min-width:96px;max-width:24%;padding:4px 6px}
+ .game-marriage.public-table .seat{display:grid;grid-template-columns:minmax(40px,1fr) auto;gap:3px 6px;min-width:112px}
+ .game-marriage .seat>strong{font-size:11px}.game-marriage .seat>span{font-size:9px}.game-marriage.public-table .seat>strong{flex-direction:column;gap:3px;grid-column:1;grid-row:1}.game-marriage.public-table .seat>span{grid-column:1;grid-row:2;max-width:66px;white-space:normal}
+ .game-marriage .public-melds{max-width:none;grid-column:2;grid-row:1/3}.game-marriage .public-melds .exposed-hand{padding:0;gap:0}
+ .game-marriage .table-opponents .seat .public-melds .playing-card{width:24px;height:30px;padding:2px;border-radius:3px}.game-marriage .table-opponents .seat .public-melds .playing-card .card-index{font-size:15px}
+ .game-marriage .table-ground.has-melds{grid-area:middle;margin-left:14px;max-width:112px;align-self:center;gap:2px}.game-marriage .table-ground .playing-card{width:23px;height:26px;padding:1px}.game-marriage .table-ground .playing-card .card-index{font-size:14px}.game-marriage .ground-label{font-size:9px}
+ .game-marriage .table-middle{min-height:0;gap:22px;padding:4px 6px}.game-marriage.has-exposed .table-middle{padding-left:122px}
+ .game-marriage .hand-area{grid-area:hand;overflow:visible}.game-marriage .hand-heading{min-height:25px;flex-wrap:nowrap}.game-marriage .my-hand{padding:5px 20px 15px 5px;align-content:end;min-height:0;gap:0}.table-layout.game-marriage .my-hand .playing-card{max-height:calc(var(--marriage-hand) - 44px);width:min(96px,calc(100% + 14px));margin:0;padding:3px}.game-marriage .table-controls{grid-area:controls;gap:7px;padding:4px 2px;max-height:100%;overflow:auto}.game-marriage .table-status{grid-area:status;max-height:22px;padding:0 4px}.game-marriage .table-status small{font-size:9px}
+}
+@media(orientation:landscape) and (min-width:560px) and (max-height:360px){
+ .game-marriage{--marriage-hand:104px;grid-template-columns:minmax(0,1fr) 96px;grid-template-rows:28px 44px minmax(56px,1fr) 18px var(--marriage-hand);gap:3px 6px}.game-marriage.public-table{grid-template-rows:28px 80px minmax(56px,1fr) 18px var(--marriage-hand)}
+ .game-marriage .table-opponents{gap:4px;padding:2px}.game-marriage .table-opponents .seat{min-width:76px;padding:2px 4px}.game-marriage.public-table .seat{min-width:100px;gap:2px 4px;grid-template-columns:35px auto}.game-marriage .seat>strong{font-size:9px}.game-marriage .seat>span{font-size:8px}.game-marriage .player-avatar{width:18px;height:18px;font-size:10px}
+ .game-marriage .table-opponents .seat .public-melds .playing-card{width:18px;height:24px;padding:1px}.game-marriage .table-opponents .seat .public-melds .playing-card .card-index{font-size:12px}
+ .game-marriage .table-ground.has-melds{margin-left:8px;max-width:70px}.game-marriage .table-ground .playing-card{width:17px;height:19px;padding:0}.game-marriage .table-ground .playing-card .card-index{font-size:11px}.game-marriage .ground-label{display:none}
+ .game-marriage.has-exposed .table-middle{padding-left:74px;gap:12px}.game-marriage .table-middle .playing-card{width:34px;height:47px}.game-marriage .deck-zone{gap:2px;font-size:8px}.game-marriage .discard-zone{min-width:46px;padding:3px}.game-marriage .hand-heading{min-height:24px;font-size:9px}.game-marriage .table-status{max-height:18px}.game-marriage .table-controls button{min-height:32px;padding:5px;font-size:10px}.game-marriage .gesture-hint{font-size:8px}
+}
+
+@media(orientation:landscape) and (min-width:1000px) and (min-height:600px){.game-marriage{grid-template-rows:40px 76px minmax(110px,1fr) 26px var(--marriage-hand)}.game-marriage.public-table{grid-template-rows:40px 128px minmax(110px,1fr) 26px var(--marriage-hand)}.game-marriage .table-opponents .seat .public-melds .playing-card{width:30px;height:38px}.game-marriage .table-opponents .seat .public-melds .playing-card .card-index{font-size:18px}.game-marriage .table-ground .playing-card{width:27px;height:34px}.game-marriage .table-ground .playing-card .card-index{font-size:17px}.game-marriage .seat>strong{font-size:13px}.game-marriage .player-avatar{width:30px;height:30px}.game-marriage .table-status{max-height:26px;font-size:11px}}
+
+.game-marriage .table-status{scrollbar-width:none}.game-marriage .table-status::-webkit-scrollbar{display:none}
+.game-marriage .public-melds .exposed-hand{max-height:90px;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin}.game-marriage .table-ground{pointer-events:auto}.game-marriage .table-ground .exposed-hand{max-height:78px;overflow-y:auto;scrollbar-width:thin}
+@media(orientation:landscape) and (max-height:360px){.game-marriage .public-melds .exposed-hand{max-height:72px}.game-marriage .table-ground .exposed-hand{max-height:57px}}
+@media(orientation:landscape) and (min-width:1000px) and (min-height:600px){.game-marriage .public-melds .exposed-hand{max-height:114px}.game-marriage .table-ground .exposed-hand{max-height:102px}}
+@media(orientation:portrait){.game-marriage .public-melds .exposed-hand{max-height:81px}}
+
+.game-marriage .table-ground .exposed-hand{padding:0}@media(orientation:portrait){.game-marriage .table-ground .exposed-hand{max-height:81px}}

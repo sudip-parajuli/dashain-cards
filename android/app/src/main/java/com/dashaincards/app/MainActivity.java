@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends Activity {
     private WebView web;
+    private boolean tableActive;
     private ValueCallback<Uri[]> chooser;
     private String exportText;
     private volatile String roomServer = "";
@@ -89,7 +90,28 @@ public class MainActivity extends Activity {
     private void showLoadError(String message) {
         if (!isFinishing()) new AlertDialog.Builder(this).setTitle("Dashain Cards could not start").setMessage(message).setPositiveButton("Retry", (d,w) -> web.reload()).setNegativeButton("Close", (d,w) -> finish()).show();
     }
+    private void updateTableBars() {
+        boolean immersive = tableActive && getResources().getConfiguration().orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE;
+        if (android.os.Build.VERSION.SDK_INT >= 30) {
+            android.view.WindowInsetsController controller = getWindow().getInsetsController();
+            if (controller != null) {
+                controller.setSystemBarsBehavior(android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+                if (immersive) controller.hide(android.view.WindowInsets.Type.systemBars());
+                else controller.show(android.view.WindowInsets.Type.systemBars());
+            }
+        } else {
+            getWindow().getDecorView().setSystemUiVisibility(immersive ? View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION : View.SYSTEM_UI_FLAG_VISIBLE);
+        }
+    }
+    @Override public void onConfigurationChanged(android.content.res.Configuration configuration) {
+        super.onConfigurationChanged(configuration);
+        updateTableBars();
+    }
     public class ExportBridge {
+        @JavascriptInterface public void setTableActive(boolean active) {
+            runOnUiThread(() -> { if (tableActive != active) { tableActive = active; updateTableBars(); } });
+        }
+
         @JavascriptInterface public void resetTableRotation() {
             runOnUiThread(() -> setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_FULL_USER));
         }
@@ -146,6 +168,7 @@ public class MainActivity extends Activity {
     }
     @Override protected void onResume() {
         super.onResume();
+        updateTableBars();
         if (web != null) { web.onResume(); web.evaluateJavascript("document.dispatchEvent(new Event('dashainresume'))", null); }
     }
     @Override protected void onDestroy() { web.removeJavascriptInterface("DashainNative"); web.destroy(); super.onDestroy(); }
