@@ -44,3 +44,41 @@
 @media(orientation:landscape) and (min-width:560px){.table-layout.game-kitti{grid-template-rows:30px 50px minmax(100px,1fr) 20px minmax(100px,28dvh)}.table-layout.game-kitti .hand-area{height:auto;min-height:0;display:flex;gap:1px}.game-kitti .hand-heading{min-height:20px}.table-layout.game-kitti .kitti-inline-hand{min-height:58px;padding:3px 8px 7px;gap:22px}.table-layout.game-kitti .my-hand .kitti-bundle .playing-card{width:39px;height:55px;flex-basis:39px}.table-layout.game-kitti .my-hand .kitti-unassigned .playing-card{width:35px;height:49px;flex-basis:35px}.game-kitti .hand-controls{position:absolute;right:6px;bottom:12px;max-width:135px;flex-direction:column;gap:4px}.game-kitti .hand-controls button{font-size:10px;min-height:30px;padding:5px;width:100%}.game-kitti:has(.hand-controls) .kitti-inline-hand{margin-right:140px}.table-layout.game-kitti .hand-heading,.game-kitti .hand-controls,.game-kitti .my-hand{grid-column:auto;grid-row:auto}}
 
 @media(orientation:landscape) and (min-width:560px){.game-kitti .hand-controls{width:120px}.game-kitti .hand-controls button{font-size:12px;min-height:36px}}
+
+/* Readable physical cards: overlap the hand rather than shrink the faces. */
+.table-layout{--pile-width:clamp(56px,8vw,76px)}
+.table-layout .table-middle .deck-zone .playing-card,
+.table-layout .table-middle .empty-discard{width:var(--pile-width);height:auto;aspect-ratio:5/7;min-height:0;max-height:none}
+.table-layout .table-middle .deck-zone .card-index{font-size:clamp(18px,2.8vw,24px)}
+.table-layout .table-middle .deck-zone .pip{font-size:32px}
+.game-jutpatti .discard-zone{left:calc(50% + var(--pile-width) + 14px)}
+.table-layout.game-kitti{--kitti-card:clamp(60px,16vw,82px);--kitti-step:calc(var(--kitti-card)*.48)}
+.table-layout.game-kitti .kitti-inline-hand{gap:12px;padding:16px 3px 12px;min-height:calc(var(--kitti-card)*1.4 + 28px)}
+.table-layout.game-kitti .my-hand .kitti-bundle .playing-card,
+.table-layout.game-kitti .my-hand .kitti-unassigned .playing-card{width:var(--kitti-card);height:auto;aspect-ratio:5/7;flex:0 0 var(--kitti-card);max-height:none;padding:4px}
+.table-layout.game-kitti .my-hand .kitti-bundle .playing-card+.playing-card,
+.table-layout.game-kitti .my-hand .kitti-unassigned .playing-card+.playing-card{margin-left:calc(var(--kitti-step) - var(--kitti-card))}
+.game-kitti .my-hand .card-index{font-size:20px}.game-kitti .my-hand .pip{font-size:32px}
+.game-kitti .my-hand .bottom{font-size:12px}
+@media(orientation:portrait){.game-kitti .kitti-inline-hand:has(>.kitti-bundle:nth-child(3)){--kitti-step:calc(var(--kitti-card)*.34);gap:8px}}
+.showdown-player .playing-card{width:40px;height:56px}.showdown-player .card-index{font-size:17px}.showdown-player .pip{font-size:23px}
+.showdown-player>div{gap:0}.showdown-player .playing-card+.playing-card{margin-left:-12px}.showdown-player{padding:4px;min-width:90px}
+@media(orientation:portrait) and (max-height:650px){.table-layout.game-kitti{grid-template-rows:40px 66px minmax(170px,1fr) 24px minmax(150px,.65fr);gap:4px}.game-kitti .table-status{font-size:9px}.showdown-player .playing-card{width:36px;height:50px}}
+@media(orientation:portrait) and (max-width:360px){.table-layout.game-kitti{--kitti-card:56px;--kitti-step:24px}.table-layout.game-kitti .kitti-inline-hand{gap:8px}}
+@media(orientation:landscape) and (min-width:560px){
+ .table-layout{--pile-width:clamp(48px,14dvh,80px)}
+ .table-layout:not(.game-marriage):not(.game-kitti):not(.game-faras):not(.game-jutpatti){grid-template-rows:32px 54px minmax(65px,1fr) auto 24px minmax(134px,35dvh)}
+ .table-layout:not(.game-marriage):not(.game-kitti):not(.game-faras):not(.game-jutpatti) .my-hand .playing-card{width:min(96px,calc(100% + 18px),clamp(58px,calc((35dvh - 48px)*.7142857),110px));max-height:none}
+ .table-layout.game-kitti{--kitti-card:clamp(58px,19dvh,112px);--kitti-step:calc(var(--kitti-card)*.58);grid-template-rows:30px 50px minmax(90px,1fr) 20px minmax(126px,34dvh)}
+ .table-layout.game-kitti .kitti-inline-hand{gap:18px;padding:12px 3px 8px;min-height:calc(var(--kitti-card)*1.4 + 20px)}
+ .table-layout.game-kitti:has(.hand-controls) .kitti-inline-hand{margin-right:132px}
+ .table-layout .my-hand .playing-card .card-index{font-size:18px}
+ .showdown-player .playing-card{width:36px;height:50px}
+}
+@media(orientation:landscape) and (max-height:360px){
+ .table-layout.game-faras{grid-template-rows:28px 52px minmax(40px,1fr) 18px 138px;gap:3px}
+ .table-layout.game-kitti{--kitti-card:56px;--kitti-step:30px;grid-template-rows:28px 40px minmax(60px,1fr) 18px 116px;gap:3px}
+ .table-layout.game-kitti .kitti-inline-hand{padding-top:8px;gap:12px}
+ .showdown-player .playing-card{width:30px;height:42px}
+}
+@media(orientation:portrait) and (max-height:650px){.table-layout.game-callbreak{grid-template-rows:36px 54px minmax(64px,1fr) auto 28px 230px}.table-layout.game-callbreak .my-hand{padding-bottom:32px}}

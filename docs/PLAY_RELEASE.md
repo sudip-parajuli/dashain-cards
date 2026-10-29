@@ -1,6 +1,6 @@
 # Play release preparation — 29 October 2026
 
-Package: `com.dashaincards.app`. Current version 1.7.1, version code 35. Android 8+ (min SDK 26), compile/target SDK 36. The first internal release was published on 29 October 2026 and Play Console reports it active and available to internal testers. Tester membership is managed in Play Console. Public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
+Package: `com.dashaincards.app`. Current version 1.7.2, version code 36. Android 8+ (min SDK 26), compile/target SDK 36. The first internal release was published on 29 October 2026 and Play Console reports it active and available to internal testers. Tester membership is managed in Play Console. Public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
 
 ## Build and verification
 
@@ -51,3 +51,11 @@ All 167 automated tests and actual local workerd/WebSocket checks passed. A disp
 Version 1.7.1 AAB SHA-256: `D28FB2E9CC691C1AE9FED6E4A4632163BDB414E889FDC78EFDE2E5693B0859CE`.
 
 Play Console confirmed version 1.7.1 active and available to internal testers on 29 October 2026. The existing opt-in link and tester list continue to apply. The only Play warning is the optional deobfuscation file for this unminified build. Physical-device feedback remains part of internal testing.
+
+## Version 1.7.2 update
+
+Code 36 enlarges Kitti hand cards from the former 34–39 px widths to responsive faces (approximately 62 px at 390 × 844 and 74 px at 844 × 390). Completed groups overlap more tightly on narrow portrait screens. Stock and discard faces share responsive sizing across drawing games. Landscape hand cards retain their proportions; small portrait Call Break and short landscape Faras reserve enough space for the full hand.
+
+The 167-test suite passed. Browser fixtures use the actual game renderer and card artwork: all seven hands were checked at 320 × 568, 568 × 320, 390 × 844 and 844 × 390. Kitti was also inspected on a desktop viewport. The two small-screen clipping issues found during inspection were corrected and rechecked. No physical Android device was attached. Signed build, full lint, bundletool and recursive APK asset hash verification passed.
+
+Version 1.7.2 AAB SHA-256: `21B73F18AFD492736BA7072D340CFF0C3D290B6DB1A2FF0C2723A9D7781BFD9D`.
