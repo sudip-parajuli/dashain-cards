@@ -94,7 +94,7 @@ The Android app is a development build, not a published Play Store release. Phys
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md) and [third-party notices](THIRD_PARTY_NOTICES.md). No open-source license has been selected for the application code; public visibility alone does not grant reuse rights. The bundled Baloo 2 font retains its SIL Open Font License.
 
-Built by **Sudip Parajuli / Techwired Solutions**. Support: s.techwired@gmail.com.
+Built by **Sudip Parajuli / Techwired Solutions**. Support: hello@techwiredsolutions.com.np.
 
 ## Version 1.5.1
 
@@ -115,3 +115,7 @@ Settings gathers sound/music, profile, language, game defaults, About, support/p
 The original Dashain Dhun arrangement uses a warm reed-style lead, sustained tonic/fifth and gentle six-beat percussion inspired by Mangal/Malashree dhun textures. It is a new composition, not a transcription or sampled recording. [SAC Music's Mangal Dhoon catalogue](https://sacmusicinternational.com/release/sarang-an-instrument-of-the-panchhe-baja/) was consulted for instrumental context. Card draws, discards and deals now use synthesized broadband paper swishes and light contact sounds instead of pitched note cues.
 
 Marriage landscape fills the available viewport, reserves a separate full-width player rail, and keeps the hand, status and side actions in distinct rows. Exposed cards have opaque ivory faces and strong red/black ranks; extra rows scroll within their own meld panel. Android landscape tables hide system bars, which can be revealed by a swipe; leaving the table restores them. Games in the home navigation scrolls directly to the seven game tiles, including when navigating from another screen.
+
+## Version 1.6.0
+
+In-app privacy, professional incoming support address, unified custom rules without third-party preset branding, strict shared-score rule validation, secure deck randomness, HTTPS-only release builds, and per-room real-time infrastructure. See [security review](docs/SECURITY_REVIEW.md) and [capacity assessment](docs/CAPACITY.md) for verification and limits.

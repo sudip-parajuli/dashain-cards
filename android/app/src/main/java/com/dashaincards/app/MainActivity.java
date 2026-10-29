@@ -35,7 +35,8 @@ public class MainActivity extends Activity {
         web.getSettings().setDomStorageEnabled(true);
         web.getSettings().setAllowFileAccess(false);
         web.getSettings().setAllowContentAccess(true);
-        web.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        boolean debug = (getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        web.getSettings().setMixedContentMode(debug ? WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE : WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         if ((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0) WebView.setWebContentsDebuggingEnabled(true);
         web.addJavascriptInterface(new ExportBridge(), "DashainNative");
         web.setWebViewClient(new WebViewClient() {
@@ -49,7 +50,7 @@ public class MainActivity extends Activity {
                 if (path == null || !path.startsWith("/assets/public/") || path.contains("..")) return null;
                 try {
                     String asset = path.substring("/assets/".length());
-                    String mime = asset.endsWith(".js") ? "text/javascript" : asset.endsWith(".css") ? "text/css" : asset.endsWith(".svg") ? "image/svg+xml" : asset.endsWith(".json") ? "application/json" : "text/html";
+                    String mime = asset.endsWith(".js") ? "text/javascript" : asset.endsWith(".css") ? "text/css" : asset.endsWith(".svg") ? "image/svg+xml" : asset.endsWith(".json") ? "application/json" : asset.endsWith(".ttf") ? "font/ttf" : "text/html";
                     return new WebResourceResponse(mime, "UTF-8", getAssets().open(asset));
                 } catch (IOException e) {
                     android.util.Log.e("DashainCards", "Missing bundled asset: " + path, e);
@@ -70,7 +71,7 @@ public class MainActivity extends Activity {
         });
         web.setWebChromeClient(new WebChromeClient() {
             @Override public boolean onConsoleMessage(ConsoleMessage message) {
-                android.util.Log.println(message.messageLevel() == ConsoleMessage.MessageLevel.ERROR ? android.util.Log.ERROR : android.util.Log.INFO, "DashainCards", message.message() + " at " + message.sourceId() + ":" + message.lineNumber());
+                if ((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0) android.util.Log.println(message.messageLevel() == ConsoleMessage.MessageLevel.ERROR ? android.util.Log.ERROR : android.util.Log.INFO, "DashainCards", message.message() + " at " + message.sourceId() + ":" + message.lineNumber());
                 return true;
             }
             @Override public boolean onJsConfirm(WebView view, String url, String message, JsResult result) {

@@ -4,7 +4,7 @@ This is an actively developed entertainment app. A source scan is not a security
 
 ## Report an issue
 
-Email **s.techwired@gmail.com** with the affected version, reproduction steps and impact. Avoid including real player records, bearer tokens or signing keys. Do not publish an exploit or confidential credentials in a public issue.
+Email **hello@techwiredsolutions.com.np** with the affected version, reproduction steps and impact. Avoid including real player records, bearer tokens or signing keys. Do not publish an exploit or confidential credentials in a public issue.
 
 ## Sensitive files
 

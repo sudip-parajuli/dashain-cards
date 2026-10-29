@@ -70,3 +70,5 @@ body{font-family:Baloo,'Segoe UI',Arial,sans-serif;font-size:16px}.hero .muted{f
 .settings-card .secondary:hover:not(:disabled),.settings-dialog .secondary:hover:not(:disabled){background:#d8deed;color:#293c72}.game-default-row:hover:not(:disabled){background:#e3e8f5;color:#233c65}.audio-test-status{font-size:12px;margin-left:8px;color:#57715f}.footer{gap:10px;flex-wrap:wrap}
 
 .music-caption{display:block;font-size:11px;color:#7c6d52;margin-top:5px}
+
+.privacy-panel{max-width:820px;margin:auto;line-height:1.75}.privacy-panel h1{font-size:30px}.privacy-panel h2{font-size:22px;margin-top:28px}.privacy-panel a{overflow-wrap:anywhere}

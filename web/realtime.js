@@ -1,0 +1,8 @@
+import {validServer,validateRoom} from './online.js';
+export function eventsServer(server){const base=validServer(server),url=new URL(base);if(['www.techwiredsolutions.com.np','techwiredsolutions.com.np'].includes(url.hostname))return 'https://dashain-cards.sparajuli802.workers.dev/dashaincards';return base;}
+export function subscribe(server,kind,code,token,onValue){
+ const base=eventsServer(server);let socket,timer,ping,stopped=false,failures=0,connected=false;const feed={key:server+'/'+kind+'/'+code+'/'+token,latest:null,get connected(){return connected;},close(){stopped=true;clearTimeout(timer);clearInterval(ping);socket?.close();},resync(){if(connected)socket.send(JSON.stringify({type:'sync'}));}};
+ if(!/^https:/.test(base)||typeof WebSocket==='undefined'||!['rooms','scores'].includes(kind)||!/^\d{6}$/.test(code)||!/^[a-f0-9]{64}$/.test(token))return feed;
+ function open(){if(stopped)return;try{socket=new WebSocket(base.replace(/^https:/,'wss:')+'/api/'+kind+'/'+code+'/events',['dashain-v1','auth.'+token]);socket.onopen=()=>{connected=true;failures=0;ping=setInterval(()=>{if(socket.readyState===1)socket.send('ping');},30000);};socket.onmessage=e=>{if(e.data==='pong')return;try{const data=JSON.parse(e.data);if(data.type!=='snapshot')return;const value=kind==='rooms'?validateRoom(data.value):data.value;if(value.code!==code)return;feed.latest=value;onValue(value);}catch{socket.close(1008,'Invalid server state');}};socket.onerror=()=>{};socket.onclose=()=>{connected=false;clearInterval(ping);if(!stopped)timer=setTimeout(open,Math.min(30000,1000*2**Math.min(5,failures++)));};}catch{connected=false;if(!stopped)timer=setTimeout(open,10000);}}
+ open();return feed;
+}

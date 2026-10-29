@@ -13,8 +13,9 @@ Push-Location $projectRoot
 try {
     Run-Tool 'node' @('scripts/build.mjs')
     $manifest = Get-Content 'android\app\src\main\AndroidManifest.xml' -Raw
-    $manifest = $manifest.Replace('<manifest xmlns:android=', '<manifest package="com.dashaincards.app" android:versionCode="31" android:versionName="1.5.1" xmlns:android=')
+    $manifest = $manifest.Replace('<manifest xmlns:android=', '<manifest package="com.dashaincards.app" android:versionCode="32" android:versionName="1.6.0" xmlns:android=')
     $manifest = $manifest.Replace('<application ', '<uses-sdk android:minSdkVersion="26" android:targetSdkVersion="36"/><application android:debuggable="true" ')
+    $manifest = $manifest.Replace('android:usesCleartextTraffic="false"', 'android:usesCleartextTraffic="true"')
     $manifestPath = Join-Path $BuildDir 'AndroidManifest.xml'
     Set-Content -LiteralPath $manifestPath -Value $manifest -Encoding utf8
     Run-Tool (Join-Path $toolsPath 'aapt2.exe') @('compile','--dir','android\app\src\main\res','-o',(Join-Path $BuildDir 'resources.zip'))

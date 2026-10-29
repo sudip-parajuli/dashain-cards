@@ -9,11 +9,11 @@ export class RoomStore{
  constructor(){this.rooms=new Map();}
  credentials(){return randomBytes(32).toString('hex');}
  player(name){if(typeof name!=='string'||!name.trim()||name.trim().length>24)throw Error('Enter a name of 1–24 characters.');return {name:name.trim(),token:this.credentials(),lastSeen:Date.now()};}
- create(name,options={}){
+ create(name,options={},forcedCode=null){
   this.cleanup();if(this.rooms.size>=200)throw Error('Room capacity reached. Try later.');if(!options||typeof options!=='object'||Array.isArray(options))throw Error('Choose valid room rules.');
   const type=options.game??'marriage',meta=friendGame(type),players=friendPlayerCount(type,Number(options.players??meta.default)),rules={...(type==='marriage'?marriageOptions(options):otherRules({...options,game:type})),...chipRules(options),...(options.economyVersion===2||options.coinsPerPoint!==undefined||(type!=='faras'&&options.boot!==undefined)?economyRules(type,options):{}),game:type,players};
   if(rules.boot&&rules.initialChips<rules.boot)throw Error('Starting chips must cover the boot.');
-  let code;do{code=String(randomInt(100000,1000000));}while(this.rooms.has(code));
+  let code=forcedCode;if(code!==null){if(!/^[1-9][0-9]{5}$/.test(code)||this.rooms.has(code))throw Error('Room code unavailable.');}else do{code=String(randomInt(100000,1000000));}while(this.rooms.has(code));
   const p=this.player(name?.trim()?name:'Player 1'),room={code,gameType:type,players,options:rules,seats:[p],owner:p.token,game:null,revision:0,round:0,totals:Array(players).fill(0),balances:Array(players).fill(rules.initialChips),chipTotals:Array(players).fill(0),updated:Date.now()};this.rooms.set(code,room);return {code,token:p.token};
  }
  get(code){const r=this.rooms.get(String(code).toUpperCase());if(!r)throw Error('Room not found or expired.');return r;}

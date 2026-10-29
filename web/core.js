@@ -38,7 +38,8 @@ export function dhumbalScore(totals,caller,limit=5,penalty=25){totals.forEach(x=
 export function settlements(totals){if(Math.abs(totals.reduce((a,b)=>a+b,0))>0.001)throw Error('Only a balanced scoreboard can be settled.');const credit=totals.map((n,i)=>({n,i})).filter(x=>x.n>0),debt=totals.map((n,i)=>({n:-n,i})).filter(x=>x.n>0),out=[];for(const d of debt)for(const c of credit){const n=Math.min(d.n,c.n);if(n>0){out.push({from:d.i,to:c.i,points:n});d.n-=n;c.n-=n;}}return out;}
 export function totalsFor(session){return session.names.map((_,i)=>Math.round(session.rounds.reduce((n,r)=>n+r.scores[i],0)*10)/10);}
 export function deck(packs=1){return Array.from({length:packs},(_,p)=>['S','H','D','C'].flatMap(s=>Array.from({length:13},(_,i)=>({id:`${p}${s}${i+2}`,s,r:i+2})))).flat();}
-export function shuffle(cards,rng=Math.random){const a=[...cards];for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+export function secureRandom(){if(globalThis.crypto?.getRandomValues){const out=new Uint32Array(1);crypto.getRandomValues(out);return out[0]/4294967296;}throw Error('Secure randomness is unavailable. Update your browser.');}
+export function shuffle(cards,rng=secureRandom){const a=[...cards];for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 export const rank=r=>({11:'J',12:'Q',13:'K',14:'A',15:'Jkr',16:'★',17:'S'}[r]||String(r));
 export const suit=s=>({S:'♠',H:'♥',D:'♦',C:'♣',J:'✦',M:'★',U:'✧'}[s]);
 export function compare(a,b){for(let i=0;i<Math.max(a.length,b.length);i++){const d=(a[i]||0)-(b[i]||0);if(d)return d;}return 0;}
