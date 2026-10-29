@@ -74,3 +74,6 @@ Offline celebrations offer Save & new deal. The table now has Round result and N
 All 170 tests passed, including settled payouts and bounded audio samples. Browser checks covered selected cards across all seven games at four phone sizes, actual Kitti splitting/revealing, save-and-start with exactly one History entry, cancel/skip paths, and an actual Faras win showing its net coin gain. Full Android lint has zero errors; signed builds, bundletool and exact recursive APK asset hashes passed. No physical Android device was connected.
 
 Version 1.7.3 AAB SHA-256: `47B8562F51894E0B493B9511FF160CE2979FF0555209AA9161BC2E10D3E13248`.
+
+Play Console confirmed version 1.7.3 active and available to internal testers on 29 October 2026. The existing opt-in link and tester list remain in use. The only Play warning is the optional deobfuscation file for this unminified build. Final deployed hand and next-deal assets were verified. GitHub's unauthenticated CI lookup was rate-limited; local tests and source checks passed.
+
