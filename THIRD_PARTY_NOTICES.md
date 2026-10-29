@@ -9,3 +9,7 @@
 The app's Marriage rule descriptions were informed by [Pagat](https://www.pagat.com/rummy/marriage.html) and [Nepali Games](https://nepali.games/marriage/how-to-play). Regional and household variations exist. These references are not bundled third-party source code.
 
 Court artwork is project SVG code. No third-party APKs, tool binaries or reverse-engineering outputs are included. Android SDK/JDK, Cloudflare tools and browser automation tooling are external development tools, not vendored dependencies.
+
+## Music and sound
+
+The background score and game cues are original procedural compositions synthesized by `web/audio.js`; no third-party recording or sample is bundled.

@@ -140,6 +140,14 @@ public class MainActivity extends Activity {
         }
     }
     @Override public void onBackPressed() { if (web.canGoBack()) web.goBack(); else new AlertDialog.Builder(this).setMessage("Close Dashain Cards? Your games and scores are saved.").setPositiveButton("Close",(d,w)->finish()).setNegativeButton("Stay",null).show(); }
+    @Override protected void onPause() {
+        if (web != null) { web.evaluateJavascript("document.dispatchEvent(new Event('dashainpause'))", null); web.onPause(); }
+        super.onPause();
+    }
+    @Override protected void onResume() {
+        super.onResume();
+        if (web != null) { web.onResume(); web.evaluateJavascript("document.dispatchEvent(new Event('dashainresume'))", null); }
+    }
     @Override protected void onDestroy() { web.removeJavascriptInterface("DashainNative"); web.destroy(); super.onDestroy(); }
 }
 

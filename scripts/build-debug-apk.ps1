@@ -13,7 +13,7 @@ Push-Location $projectRoot
 try {
     Run-Tool 'node' @('scripts/build.mjs')
     $manifest = Get-Content 'android\app\src\main\AndroidManifest.xml' -Raw
-    $manifest = $manifest.Replace('<manifest xmlns:android=', '<manifest package="com.dashaincards.app" android:versionCode="29" android:versionName="1.4.1" xmlns:android=')
+    $manifest = $manifest.Replace('<manifest xmlns:android=', '<manifest package="com.dashaincards.app" android:versionCode="30" android:versionName="1.5.0" xmlns:android=')
     $manifest = $manifest.Replace('<application ', '<uses-sdk android:minSdkVersion="26" android:targetSdkVersion="36"/><application android:debuggable="true" ')
     $manifestPath = Join-Path $BuildDir 'AndroidManifest.xml'
     Set-Content -LiteralPath $manifestPath -Value $manifest -Encoding utf8

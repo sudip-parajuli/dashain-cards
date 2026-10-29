@@ -27,3 +27,9 @@ Android bundles a generated copy of `web/` and serves it at the app-assets origi
 Local games, player names and records remain in the browser/WebView's storage. Online names, moves, hands and shared records reach the configured service. The deployed frontend is public configuration; no API credential belongs in `web/`. JSON backups contain names and scores. Keep them outside Git and share intentionally.
 
 The production deployment configuration, provider sessions, signing keys and generated APKs are not source. They remain ignored locally.
+
+## Preferences and audio
+
+`play-preferences.js` resolves complete quick-play defaults without mutating stored or active rules. Game-default forms persist to the existing per-game options, and apply only when starting a new deal. Settings is available in the home navigation and as an in-table modal.
+
+`audio.js` synthesizes an original offline loop and effects with Web Audio. Audio creation/resume is gesture-gated; background visibility and Android lifecycle events stop voices and scheduling. Audio preferences use the separate `dashain-audio-v1` local-storage key. Committed snapshot comparisons avoid replaying move/result sounds on sorting, polling or reload. No external audio files or third-party music service is used.

@@ -2,7 +2,7 @@
 
 Seven Nepali card games, one place to play and keep score. Built around the Dashain tradition of gathering around a table, with English and Nepali interfaces, offline bot games, online friends rooms and shared live scorekeepers.
 
-**[Try the live app](https://www.techwiredsolutions.com.np/dashaincards)** · Version 1.4.1 · Android companion app in development
+**[Try the live app](https://www.techwiredsolutions.com.np/dashaincards)** · Version 1.5.0 · Android companion app in development
 
 ![Marriage in landscape](docs/screenshots/landscape.png)
 
@@ -70,7 +70,7 @@ npm test
 npm run build
 ```
 
-The current suite contains 151 tests covering rules, settlements, hidden-card boundaries, stale actions, live scores, durable restarts and animation transitions. Building copies `web/` to `dist/` and the Android assets folder; generated copies are intentionally untracked.
+The current suite contains 156 tests covering rules, settlements, hidden-card boundaries, stale actions, live scores, durable restarts and animation transitions. Building copies `web/` to `dist/` and the Android assets folder; generated copies are intentionally untracked.
 
 See [Android setup](docs/ANDROID.md) for the debug APK, and [architecture](docs/ARCHITECTURE.md) for the project structure.
 
@@ -96,10 +96,16 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md) and [third-p
 
 Built by **Sudip Parajuli / Techwired Solutions**. Support: s.techwired@gmail.com.
 
-## Version 1.4.1
+## Version 1.5.0
 
 Desktop Jutpatti uses an overlapping curved hand and automatic pair/wild sorting. New deals default to the indicator rank for 2–3 players and the next higher rank for 4–6; Ace wraps to 2. The old lower-rank preference migrates to this automatic rule for new deals; active rounds retain their stored wild rank. Same, higher and no-wild variants remain configurable.
 
 Cards can be discarded anywhere in the centre play area in Marriage, Dhumbal and Jutpatti; Call Break and Dahar Mara continue to use that area for legal trick plays. Existing turn/phase validation still applies.
 
 New offline wallets start with 5,000 coins. Existing balances are preserved. Active users receive 150 coins automatically once per 24 hours; missed days do not accumulate. Rewards stay outside any committed game budget and cannot be claimed twice after reload. No ad reward integration is included.
+
+## Version 1.5.0
+
+Play setup now shows only the point rate or boot (no field for Faras). Complete saved defaults are used for all seven games; Marriage still starts with the Nepali preset. Change player counts, table budgets, card values and house variants in Game settings before play or from the table gear menu. Saving defaults never changes a deal already in progress; the next deal uses the saved defaults.
+
+Settings gathers sound/music, profile, language, game defaults, About, support/privacy links and backups. An original synthesized pentatonic background loop and short UI/draw/discard/play/chip/turn/show/result cues run offline through Web Audio, without external sound assets. Music and effects have independent toggles/volumes plus a persistent master mute. Browser visibility and Android pause/resume events silence background audio. Sound starts only after a user gesture; unsupported audio never blocks gameplay. Local bots pause while a settings dialog is open; online rooms continue independently.
