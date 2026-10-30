@@ -2,11 +2,13 @@
 
 Seven Nepali card games, one place to play and keep score. Built around the Dashain tradition of gathering around a table, with English and Nepali interfaces, offline bot games, online friends rooms and shared live scorekeepers.
 
-**[Try the live app](https://www.techwiredsolutions.com.np/dashaincards)** · Version 1.5.1 · Android companion app in development
+**[Try the live app](https://www.techwiredsolutions.com.np/dashaincards)** · Version 1.8.0 · Android internal testing
 
 ![Marriage in landscape](docs/screenshots/landscape.png)
 
 [View the phone homepage](docs/screenshots/home.png)
+
+[Call Break match rules](docs/CALL_BREAK.md) · [Internal Android release](docs/PLAY_RELEASE.md)
 
 ## Engineering focus
 
@@ -21,7 +23,7 @@ rules. Read [architecture](docs/ARCHITECTURE.md) for those decisions and
 | Game | Players | Play and scoring |
 | --- | --- | --- |
 | Marriage | 2–5 | Melds, dublees, public tunnelas, editable maal rules and explained round settlements |
-| Call Break | 3–4 | Calls, legal trick play and scorekeeping; three players remove 2♥ |
+| Call Break | 3–4 | Five-round matches, editable rank stakes and 8-call rules; three players remove 2♥ |
 | Dhumbal | 2–5; 6–7 as a house variant | Draw/discard, matching sets, optional runs and Jhyap |
 | Dahar Mara | Exactly 4 | Two teams, trump, captured tens and kot scorekeeping |
 | Kitti | 2–5 | Three private hands, showings and configurable winning rules |

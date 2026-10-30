@@ -1,3 +1,4 @@
+import {initCallMatch,finishCallRound} from './callbreak-match.js';
 import {beginKittiShowdown,revealKittiSet,completeKittiSplit} from './kitti-showdown.js';
 import {playerName} from './core.js';
 import {deck,shuffle,legalCards,trickWinner,callScore,callDealConfig,threeRank,compare,isJut,dhumbalScore} from './core.js';
@@ -15,7 +16,7 @@ export function newGame(type,options={}){
  else if(type==='faras'){g.hand=Array.from({length:3},()=>g.stock.splice(0,3));g.phase='show';g.message='Hand comparison practice. Reveal to compare all three hands.';}
  else if(type==='jutpatti'){g.hand=Array.from({length:Number(options.players??3)},()=>g.stock.splice(0,Number(options.cards)||5));g.tip=g.stock.pop();g.wild=jutpattiWild(g.tip.r,g.hand.length,options.wild??'auto');g.message='Draw a card. Declare Jut when every card is paired.';}
  else if(type==='dhumbal'){g.hand=Array.from({length:Number(options.players??3)},()=>g.stock.splice(0,5));g.pile.push(g.stock.pop());g.message='Draw, then discard one card or a matching set. Call before drawing.';}
- g.scores=g.hand.map(()=>0);return g;
+ g.scores=g.hand.map(()=>0);if(type==='callbreak'&&options.callMatchVersion!==0)initCallMatch(g);return g;
 }
 export function cardValue(c,o={}){return c.r===14?1:c.r===11&&o.jackZero?0:c.r>10?(o.faceValues==='rank'?c.r:10):c.r;}
 export function handTotal(cards,o){return cards.reduce((n,c)=>n+cardValue(c,o),0);}
@@ -41,8 +42,8 @@ export function botDrawTurn(g){if(g.over||g.turn===0)return;const p=g.turn;
  else {const counts={};g.hand[p].forEach(c=>counts[c.r]=(counts[c.r]||0)+1);drop=[allowed.sort((a,b)=>((a.r===g.wild?100:counts[a.r]%2===0?20:0)-(b.r===g.wild?100:counts[b.r]%2===0?20:0))||b.r-a.r)[0]];}
  discard(g,p,drop);g.turn=(p+1)%g.hand.length;g.phase='draw';g.message=g.turn===0?'Your turn: draw or declare.':`${playerName(g,g.turn)} is playing…`;
 }
-export function bidHuman(g,bid){if(g.phase!=='bid')throw Error('Bidding has finished.');const max=g.deal?.totalTricks??13;if(!Number.isInteger(bid)||bid<1||bid>max)throw Error(`Call between 1 and ${max}.`);g.bids[0]=bid;for(let p=1;p<g.hand.length;p++)g.bids[p]=Math.max(1,Math.min(max,g.hand[p].filter(c=>c.r>=12||(c.s==='S'&&c.r>=8)).length));g.phase='play';g.message='Spades are trump. Play a legal card.';}
-export function playTrickCard(g,p,id){if(g.over||g.phase!=='play'||g.turn!==p)throw Error('Wait for your turn.');const legal=legalCards(g.hand[p],g.trick);const c=legal.find(c=>c.id===id);if(!c)throw Error('Follow suit and beat the winning card when possible; otherwise trump if available.');g.hand[p]=g.hand[p].filter(c=>c.id!==id);g.trick.push({player:p,card:c});if(g.trick.length===g.hand.length){g.lastTrick=[...g.trick];const win=trickWinner(g.trick);g.tricks[win]++;g.turn=win;g.trick=[];g.message=`${playerName(g,win)} took the trick.`;if(g.hand.every(h=>!h.length)){g.over=true;g.scores=g.bids.map((b,i)=>g.options.overtricks===false?(g.tricks[i]<b?-b:b):callScore(b,g.tricks[i],g.deal?.totalTricks??13));g.message='Deal finished. Scores include your calls and tricks.';}}else g.turn=(p+1)%g.hand.length;}
+export function bidHuman(g,bid){if(g.phase!=='bid')throw Error('Bidding has finished.');const max=g.deal?.totalTricks??13;if(!Number.isInteger(bid)||bid<1||bid>max)throw Error(`Call between 1 and ${max}.`);g.bids[0]=bid;for(let p=1;p<g.hand.length;p++)g.bids[p]=Math.max(1,Math.min(max,g.hand[p].filter(c=>c.r>=12||(c.s==='S'&&c.r>=8)).length));if(g.callMatch?.rules.eightEnabled){let taken=false;g.bids=g.bids.map(b=>b===8?(taken?7:(taken=true,8)):b);}g.phase='play';g.turn=g.openingSeat??g.turn;g.message='Spades are trump. Play a legal card.';}
+export function playTrickCard(g,p,id){if(g.over||g.phase!=='play'||g.turn!==p)throw Error('Wait for your turn.');const legal=legalCards(g.hand[p],g.trick);const c=legal.find(c=>c.id===id);if(!c)throw Error('Follow suit and beat the winning card when possible; otherwise trump if available.');g.hand[p]=g.hand[p].filter(c=>c.id!==id);g.trick.push({player:p,card:c});if(g.trick.length===g.hand.length){g.lastTrick=[...g.trick];g.trickSequence=(g.trickSequence||0)+1;const win=trickWinner(g.trick);g.lastTrickWinner=win;g.tricks[win]++;g.turn=win;g.trick=[];g.message=`${playerName(g,win)} took the trick.`;if(g.hand.every(h=>!h.length)){g.over=true;g.scores=g.bids.map((b,i)=>g.options.overtricks===false?(g.tricks[i]<b?-b:b):callScore(b,g.tricks[i],g.deal?.totalTricks??13));g.message='Deal finished. Scores include your calls and tricks.';if(g.callMatch){g.over=false;finishCallRound(g);}}}else g.turn=(p+1)%g.hand.length;}
 export function botTrickTurn(g){const p=g.turn,legal=legalCards(g.hand[p],g.trick);const sorted=[...legal].sort((a,b)=>a.r-b.r);playTrickCard(g,p,sorted[0].id);}
 function bestSplit(cards,lowBest){let best=null,bestValue=-Infinity;
  function combos(a){const out=[];for(let i=0;i<a.length;i++)for(let j=i+1;j<a.length;j++)for(let k=j+1;k<a.length;k++)out.push([a[i],a[j],a[k]]);return out;}

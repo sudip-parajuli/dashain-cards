@@ -21,8 +21,8 @@ function celebration(g,viewer,root,audio,presentation){
  const winners=roundWinners(g),won=winners.includes(viewer),dialog=document.createElement('dialog');dialog.className='win-celebration';
  const crown=document.createElement('div');crown.className='victory-crown';crown.textContent=winners.length?'♛':'✦';crown.setAttribute('aria-hidden','true');
  const eyebrow=document.createElement('p');eyebrow.className='victory-eyebrow';eyebrow.textContent=won?'WHAT A HAND!':'ONE MORE ROUND?';
- const title=document.createElement('h2');title.textContent=!winners.length?'A closely fought draw':won?'You won!':winners.map(p=>playerName(g,p)).join(' & ')+' won!';
- const note=document.createElement('p');note.textContent=winners.length?'Good cards. Better company.':'Shuffle up and try again.';
+ const title=document.createElement('h2');title.textContent=g.callMatch?.outcome==='eight-failed'?'8-call penalty':!winners.length?'A closely fought draw':won?'You won!':winners.map(p=>playerName(g,p)).join(' & ')+' won!';
+ const note=document.createElement('p');note.textContent=g.callMatch?.outcome==='eight-failed'?playerName(g,g.callMatch.eightPlayer)+' failed an 8-call. Match ended.':winners.length?'Good cards. Better company.':'Shuffle up and try again.';
  const payout=celebrationPayout(g,viewer,presentation),money=document.createElement('div');money.className='victory-payout';
  if(payout){const label=document.createElement('small');label.textContent=payout.delta>0?'Your net winnings':'Your net result';const total=document.createElement('strong');total.append(document.createTextNode(payout.value+' '));const unit=document.createElement('span');unit.textContent=payout.unit;total.append(unit);money.append(label,total);if(payout.amount){const equivalent=document.createElement('small');equivalent.textContent=payout.amount;money.append(equivalent);}if(payout.returned){const returned=document.createElement('small'),caption=document.createElement('span');caption.textContent='Returned including own boot';returned.append(caption,document.createTextNode(' · '+payout.returned+' '));const coins=document.createElement('span');coins.textContent='coins';returned.append(coins);money.append(returned);}}
  for(const winner of winners.filter(p=>p!==viewer)){const result=celebrationPayout(g,winner,presentation);if(!result)continue;const line=document.createElement('small'),name=document.createElement('span');name.dataset.userText='';name.textContent=playerName(g,winner);const unit=document.createElement('span');unit.textContent=result.unit;line.append(name,document.createTextNode(' · '+result.value+' '),unit);money.append(line);}
@@ -37,14 +37,15 @@ function celebration(g,viewer,root,audio,presentation){
 function deal(g,viewer,root,audio,onDone){
  const table=root.querySelector('.table-layout');if(!table)return;const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;if(reduced)return;
  intro=document.createElement('div');intro.className='deal-intro';intro.setAttribute('role','status');intro.innerHTML='<div class="shuffle-pack" aria-hidden="true"><i>✦</i><i>✦</i><i>✦</i><i>✦</i></div><strong>Shuffling…</strong><button type="button">Skip animation</button>';document.body.append(intro);localize(intro);table.inert=true;
- const ghosts=[],animations=[];let timer;
- const end=()=>{if(!intro)return;clearTimeout(timer);for(const a of animations)a.cancel();for(const node of ghosts)node.remove();intro.remove();intro=null;root.querySelector('.table-layout')?.removeAttribute('inert');onDone?.();};intro.finish=end;intro.querySelector('button').addEventListener('click',end,{once:true});
+ const handCards=[...table.querySelectorAll('.my-hand .playing-card')],hidden=[...table.querySelectorAll('.my-hand .playing-card,.public-melds .playing-card,.table-ground .playing-card')];for(const card of hidden)card.classList.add('dealing-hidden');intro.revealed=0;
+ const ghosts=[],animations=[];let timer,ownIndex=0;
+ const end=()=>{if(!intro)return;clearTimeout(timer);for(const card of root.querySelectorAll('.dealing-hidden'))card.classList.remove('dealing-hidden');for(const a of animations)a.cancel();for(const node of ghosts)node.remove();intro.remove();intro=null;root.querySelector('.table-layout')?.removeAttribute('inert');onDone?.();};intro.finish=end;intro.querySelector('button').addEventListener('click',end,{once:true});
  const center=table.querySelector('.stock-card')||table.querySelector('.table-middle'),origin=center.getBoundingClientRect(),plan=dealPlan(g),step=Math.min(38,1500/Math.max(plan.length,1));
  for(const [i,p]of plan.entries()){
   const target=p===viewer?table.querySelector('.my-hand'):table.querySelector(`[data-seat="${p}"]`);if(!target)continue;
-  const rect=target.getBoundingClientRect(),ghost=document.createElement('span');ghost.className='deal-card';ghost.textContent='✦';ghost.setAttribute('aria-hidden','true');document.body.append(ghost);ghosts.push(ghost);
+  const arrivingIndex=p===viewer?ownIndex++:-1,arriving=handCards[arrivingIndex],rect=(arriving||target).getBoundingClientRect(),ghost=document.createElement('span');ghost.className='deal-card';ghost.textContent='✦';ghost.setAttribute('aria-hidden','true');document.body.append(ghost);ghosts.push(ghost);
   const pos=(r,rotation)=>`translate(${r.x+r.width/2-17}px,${r.y+r.height/2-24}px) rotate(${rotation}deg)`;
-  const anim=ghost.animate([{transform:pos(origin,-10),opacity:0},{opacity:1,offset:.08},{transform:pos(rect,(i%5-2)*5),opacity:0}],{duration:300,delay:600+i*step,easing:'cubic-bezier(.2,.7,.2,1)',fill:'both'});animations.push(anim);
+  const anim=ghost.animate([{transform:pos(origin,-10),opacity:0},{opacity:1,offset:.08},{transform:pos(rect,(i%5-2)*5),opacity:0}],{duration:300,delay:600+i*step,easing:'cubic-bezier(.2,.7,.2,1)',fill:'both'});animations.push(anim);if(arriving)anim.finished.then(()=>{arriving.classList.remove('dealing-hidden');root.querySelectorAll('.my-hand .playing-card')[arrivingIndex]?.classList.remove('dealing-hidden');if(intro)intro.revealed=Math.max(intro.revealed,arrivingIndex+1);},()=>{});
  }
  audio.play('deal',.55);setTimeout(()=>{if(intro)intro.querySelector('strong').textContent='Dealing cards…';},600);timer=setTimeout(end,950+plan.length*step);
 }
@@ -62,17 +63,24 @@ function collectKitti(g,viewer,root,audio,reduced){
  }
  audio.play('deal',.8);
 }
+function collectTrick(g,viewer,root,audio,reduced,onDone){
+ const cards=[...root.querySelectorAll('.table-middle .deck-zone .playing-card')],target=g.lastTrickWinner===viewer?root.querySelector('.hand-area'):root.querySelector(`[data-seat="${g.lastTrickWinner}"]`),table=root.querySelector('.table-layout');if(!target||cards.length!==g.hand.length)return;
+ if(reduced){cards.forEach(c=>c.style.visibility='hidden');return;}table.classList.add('trick-collecting');table.inert=true;
+ const to=target.getBoundingClientRect();for(const [i,card]of cards.entries()){const from=card.getBoundingClientRect(),ghost=card.cloneNode(true);ghost.classList.add('trick-won-flight');ghost.removeAttribute('data-action');ghost.setAttribute('aria-hidden','true');Object.assign(ghost.style,{left:from.x+'px',top:from.y+'px',width:from.width+'px',height:from.height+'px'});document.body.append(ghost);const dx=to.x+to.width/2-from.x-from.width/2,dy=to.y+to.height/2-from.y-from.height/2;card.animate([{opacity:1},{opacity:0}],{delay:450,duration:100,fill:'forwards'});const a=ghost.animate([{transform:'translate(0,0)',opacity:1},{transform:`translate(${dx}px,${dy}px) rotate(${(i-1)*9}deg) scale(.6)`,opacity:0}],{delay:450+i*35,duration:600,easing:'cubic-bezier(.2,.7,.2,1)',fill:'both'});a.finished.then(()=>ghost.remove(),()=>ghost.remove());}
+ audio.play('deal',.45);setTimeout(()=>{table.classList.remove('trick-collecting');table.removeAttribute('inert');onDone?.(true);},1200);
+}
 export function animateTableExperience(g,viewer,root,audio,roomKey,onDone,presentation={}){
- const cache=roomKey?online:local,key=roomKey||g,before=cache.get(key),wins=g.showdown?.roundWinners.length||0,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
- cache.set(key,{over:g.over,reveal:g.showdown?g.showdown.round+':'+g.showdown.revealed.length:null,wins});if(online.size>40)online.delete(online.keys().next().value);
- const identity=String(roomKey||g.coinRound?.id||g.type),table=root.querySelector('.table-layout');if(table)table.dataset.dealPresentation=identity;
+ const cache=roomKey?online:local,key=roomKey||g,previous=cache.get(key),sequence=g.dealSequence||0,before=previous?.sequence===sequence?previous:null,wins=g.showdown?.roundWinners.length||0,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ cache.set(key,{over:g.over,sequence,trick:g.trickSequence||0,reveal:g.showdown?g.showdown.round+':'+g.showdown.revealed.length:null,wins});if(online.size>40)online.delete(online.keys().next().value);
+ const identity=String(roomKey||g.coinRound?.id||g.type)+':'+sequence,table=root.querySelector('.table-layout');if(table)table.dataset.dealPresentation=identity;
  if(intro&&g.over){intro.finish();celebration(g,viewer,root,audio,presentation);return;}
- if(intro){table?.setAttribute('inert','');return;}
+ if(intro){table?.setAttribute('inert','');[...root.querySelectorAll('.my-hand .playing-card')].forEach((card,i)=>card.classList.toggle('dealing-hidden',i>=intro.revealed));for(const card of root.querySelectorAll('.public-melds .playing-card,.table-ground .playing-card'))card.classList.add('dealing-hidden');return;}
  if(before&&g.showdown&&before.reveal!==g.showdown.round+':'+g.showdown.revealed.length&&!reduced){const p=g.showdown.revealed.at(-1);for(const card of root.querySelectorAll(`[data-show-seat="${p}"] .playing-card`))card.animate([{transform:'rotateY(90deg)',opacity:.2},{transform:'rotateY(0)',opacity:1}],{duration:500,easing:'ease-out'});}
+ const trickCollecting=!!before&&g.type==='callbreak'&&(g.trickSequence||0)>before.trick&&g.lastTrick?.length===g.hand.length;if(trickCollecting)collectTrick(g,viewer,root,audio,reduced,onDone);else if(before&&g.type==='callbreak'&&g.lastTrick?.length&&!g.trick.length)for(const card of root.querySelectorAll('.table-middle .deck-zone .playing-card'))card.style.visibility='hidden';
  const collecting=!!before&&hasNewKittiCollection(g,before.wins||0);
  if(collecting)collectKitti(g,viewer,root,audio,reduced);else if(g.showdown?.awaitingNext||g.over&&g.showdown)for(const card of root.querySelectorAll('.showdown-player .playing-card'))card.style.opacity='0';
- if(before&&!before.over&&g.over){if(collecting&&!reduced)setTimeout(()=>{if(root.querySelector('.table-layout')?.dataset.dealPresentation===identity&&root.querySelector('#table-result'))celebration(g,viewer,root,audio,presentation);},1650);else celebration(g,viewer,root,audio,presentation);return;}
- if(before||g.over)return;const id=roomKey||g.coinRound?.id||g;
+ if(before&&!before.over&&g.over){if((collecting||trickCollecting)&&!reduced)setTimeout(()=>{if(root.querySelector('.table-layout')?.dataset.dealPresentation===identity&&root.querySelector('#table-result'))celebration(g,viewer,root,audio,presentation);},collecting?1650:1250);else celebration(g,viewer,root,audio,presentation);return;}
+ if(before||g.over)return;const id=roomKey||g.coinRound?.id?identity:g;
  if(dealt.has(id))return;dealt.add(id);if(dealt.size>80)dealt.delete(dealt.values().next().value);try{sessionStorage.setItem('dashain-deal-motion',JSON.stringify([...dealt].filter(x=>typeof x==='string')));}catch{}
  if((g.groups?.length||0)>0||(g.steps||0)>0||(g.pile?.length||0)>1||g.showdown||g.type==='callbreak'&&g.phase!=='bid'||g.type==='faras'&&(g.actionLog?.length||0)>0)return;
  deal(g,viewer,root,audio,onDone);

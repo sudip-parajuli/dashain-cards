@@ -1,8 +1,8 @@
 // Observe committed card changes. Selection, sorting and reconnects never replay a move.
 const local=new WeakMap(),remote=new Map();
-export function motionSnapshot(g){return {type:g.type,turn:g.turn,phase:g.phase,stock:g.stockCount??g.stock?.length??0,hands:g.hand.map(h=>h.filter(Boolean).map(c=>({...c}))),pile:g.pile?.at(-1)?{...g.pile.at(-1)}:null,trick:(g.trick?.length?g.trick:g.lastTrick||[]).map(x=>({player:x.player,card:{...x.card}}))};}
+export function motionSnapshot(g){return {type:g.type,sequence:g.dealSequence||0,turn:g.turn,phase:g.phase,stock:g.stockCount??g.stock?.length??0,hands:g.hand.map(h=>h.filter(Boolean).map(c=>({...c}))),pile:g.pile?.at(-1)?{...g.pile.at(-1)}:null,trick:(g.trick?.length?g.trick:g.lastTrick||[]).map(x=>({player:x.player,card:{...x.card}}))};}
 export function cardTransitions(before,after){
- if(!before||before.type!==after.type||before.hands.length!==after.hands.length)return [];
+ if(!before||(before.sequence||0)!==(after.sequence||0)||before.type!==after.type||before.hands.length!==after.hands.length)return [];
  const moves=[];
  for(let p=0;p<after.hands.length;p++){
   const old=new Set(before.hands[p].map(c=>c.id));

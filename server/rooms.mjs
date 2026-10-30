@@ -1,3 +1,4 @@
+import {nextCallRound,callReserve} from '../web/callbreak-match.js';
 import {economyRules} from '../web/game-economy.js';
 import {validatePointRules,pointDefaults} from '../web/point-rules.js';
 import {randomBytes,randomInt} from 'node:crypto';
@@ -11,7 +12,8 @@ export class RoomStore{
  player(name){if(typeof name!=='string'||!name.trim()||name.trim().length>24)throw Error('Enter a name of 1–24 characters.');return {name:name.trim(),token:this.credentials(),lastSeen:Date.now()};}
  create(name,options={},forcedCode=null){
   this.cleanup();if(this.rooms.size>=200)throw Error('Room capacity reached. Try later.');if(!options||typeof options!=='object'||Array.isArray(options))throw Error('Choose valid room rules.');
-  const type=options.game??'marriage',meta=friendGame(type),players=friendPlayerCount(type,Number(options.players??meta.default)),rules={...(type==='marriage'?marriageOptions(options):otherRules({...options,game:type})),...chipRules(options),...(options.economyVersion===2||options.coinsPerPoint!==undefined||(type!=='faras'&&options.boot!==undefined)?economyRules(type,options):{}),game:type,players};
+  const type=options.game??'marriage',meta=friendGame(type),players=friendPlayerCount(type,Number(options.players??meta.default)),rules={...(type==='marriage'?marriageOptions(options):otherRules({...options,game:type})),...chipRules(options),...(type==='callbreak'||options.economyVersion===2||options.coinsPerPoint!==undefined||(type!=='faras'&&options.boot!==undefined)?economyRules(type,type==='callbreak'?{...options,callMatchVersion:1}:options):{}),game:type,players};
+  if(type==='callbreak'&&rules.initialChips<callReserve(rules,players))throw Error('Starting chips must cover the maximum Call Break match payment.');
   if(rules.boot&&rules.initialChips<rules.boot)throw Error('Starting chips must cover the boot.');
   let code=forcedCode;if(code!==null){if(!/^[1-9][0-9]{5}$/.test(code)||this.rooms.has(code))throw Error('Room code unavailable.');}else do{code=String(randomInt(100000,1000000));}while(this.rooms.has(code));
   const p=this.player(name?.trim()?name:'Player 1'),room={code,gameType:type,players,options:rules,seats:[p],owner:p.token,game:null,revision:0,round:0,totals:Array(players).fill(0),balances:Array(players).fill(rules.initialChips),chipTotals:Array(players).fill(0),updated:Date.now()};this.rooms.set(code,room);return {code,token:p.token};
@@ -25,6 +27,7 @@ export class RoomStore{
  applyAction(code,token,action,revision){
   const r=this.get(code),p=this.authorize(r,token);if(revision!==r.revision)throw Error('The table changed. Refresh and try again.');if(!action||typeof action!=='object'||Array.isArray(action)||typeof action.type!=='string')throw Error('Choose a valid table action.');
   if(action.type==='rename'){const name=this.player(action.name).name;if(r.seats.some((s,i)=>i!==p&&s.name.toLowerCase()===name.toLowerCase()))throw Error('That name is already at the table.');r.seats[p].name=name;if(r.game)r.game.names=r.seats.map(s=>s.name);
+  }else if(action.type==='nextcallround'){if(token!==r.owner)throw Error('Only the host can deal the next round.');nextCallRound(r.game);
   }else if(action.type==='start'||action.type==='nextdeal'){
    if(token!==r.owner)throw Error('Only the host can deal.');if(r.game&&!r.game.over)throw Error('The current deal is still in progress.');startMultiplayer(r);
   }else{

@@ -1,6 +1,6 @@
 # Play release preparation — 29 October 2026
 
-Package: `com.dashaincards.app`. Current version 1.7.3, version code 37. Android 8+ (min SDK 26), compile/target SDK 36. The first internal release was published on 29 October 2026 and Play Console reports it active and available to internal testers. Tester membership is managed in Play Console. Public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
+Package: `com.dashaincards.app`. Current version 1.8.0, version code 38. Android 8+ (min SDK 26), compile/target SDK 36. The first internal release was published on 29 October 2026 and Play Console reports it active and available to internal testers. Tester membership is managed in Play Console. Public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
 
 ## Build and verification
 
@@ -77,3 +77,13 @@ Version 1.7.3 AAB SHA-256: `47B8562F51894E0B493B9511FF160CE2979FF0555209AA9161BC
 
 Play Console confirmed version 1.7.3 active and available to internal testers on 29 October 2026. The existing opt-in link and tester list remain in use. The only Play warning is the optional deobfuscation file for this unminified build. Final deployed hand and next-deal assets were verified. GitHub's unauthenticated CI lookup was rate-limited; local tests and source checks passed.
 
+
+## 1.8.0 / code 38 — 30 October 2026
+
+Five-round Call Break matches now use configurable rank stakes, high-score and negative-score doubles (double once by default), sudden-death 8-call transfers, and all-circle restarts. Ordinary rounds never settle balances. A round-points dialog shows bids, tricks, cumulative scores and final transfers. Existing saved legacy deals retain their prior settlement rules.
+
+Cards appear progressively during distribution, Call Break tricks animate toward their winner, and active-turn text and the hand have a moving glow. Reduced-motion preferences retain static emphasis.
+
+Verification: 180 automated tests passed; isolated local workerd checks completed a full five-round match with private hands, unchanged intermediate balances and balanced final transfers. Browser checks covered progressive card visibility, trick collection, round-points details, round advancement and active-turn highlighting. Signed APK recursive asset/hash checks and bundletool validation passed. Android lint has zero errors and five nonblocking warnings. No physical-device test was performed.
+
+Signed AAB SHA-256: `b243b56452b14c1633ee06a53a885140cde5c012a8d00200a994118a0f00e39e`. Internal-track upload is in progress; this is not a public production release.

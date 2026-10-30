@@ -101,9 +101,20 @@
 }
 @media(orientation:landscape) and (min-width:560px){
  .table-layout:not(.faras-table) .my-hand .playing-card.selected{transform:translateY(calc(var(--fan-lift,0px) - 28px)) rotate(var(--fan-angle,0deg))}
- .table-layout:not(.game-kitti):not(.game-faras) .my-hand{padding-bottom:38px}
+ .table-layout:not(.game-kitti):not(.game-faras) .my-hand{padding-bottom:38px;padding-left:22px;padding-right:38px}
  .table-layout.game-kitti .kitti-inline-hand{padding-top:30px;padding-bottom:26px;min-height:calc(var(--kitti-card)*1.4 + 56px)}
  .table-layout.game-kitti{grid-template-rows:30px 50px minmax(70px,1fr) 20px minmax(158px,42dvh)}
 }
 @media(orientation:landscape) and (max-height:360px){.table-layout.game-kitti{--kitti-card:54px;grid-template-rows:28px 40px minmax(40px,1fr) 18px 152px;gap:3px}.victory-payout{margin:8px 0}.victory-payout strong{font-size:25px}}
 @media(orientation:portrait) and (max-height:650px){.table-layout.game-kitti{grid-template-rows:36px 58px minmax(150px,1fr) 24px 220px}.table-layout.game-callbreak .my-hand{padding-bottom:40px}}
+/* Deal faces enter only when their card-back flight reaches the hand. */
+.dealing-hidden{visibility:hidden!important}
+.trick-won-flight{position:fixed!important;z-index:110;pointer-events:none;margin:0!important;background:#fffdf4;color:#17283f;border-radius:6px;box-shadow:0 5px 12px #0005}.trick-won-flight.red{color:#b51632}.trick-won-flight .card-index{font-size:18px}.trick-won-flight .pip{font-size:30px}
+.call-points{width:100%;table-layout:fixed;border-collapse:collapse;font-size:12px;text-align:center}.call-points th,.call-points td{padding:7px 3px;overflow-wrap:anywhere;border-bottom:1px solid #263b4a22}.call-points small{display:block;font-size:9px;color:#647383}.call-points tfoot{background:#ead3a4;font-weight:900}.call-circle{color:#b72538;font-weight:bold}.call-points-button{white-space:normal}.call-points-wrap{max-width:100%}
+@property --turn-phase{syntax:'<angle>';initial-value:0deg;inherits:false}
+.turn-banner.my-turn{position:relative;display:inline-block;color:#fff0a3!important;font-weight:900!important;padding:4px 12px;border-radius:30px;background:#3b503b;text-shadow:0 1px 6px #ffe06b66;isolation:isolate}
+.active-hand::after,.turn-banner.my-turn::after{content:'';position:absolute;inset:0;pointer-events:none;border-radius:inherit;padding:2px;background:conic-gradient(from var(--turn-phase),#ffc95522,#ffdc62,#fff6b5,#ffc95522 36%,#ffc95522 60%,#ffdc62 80%,#ffc95522);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;animation:turn-border-run 2.6s linear infinite}
+.active-hand{position:relative}.active-hand::after{z-index:6;border-radius:16px}
+@keyframes turn-border-run{to{--turn-phase:360deg}}
+@media(orientation:landscape){.turn-banner.my-turn{font-size:12px;padding:2px 8px}}
+@media(prefers-reduced-motion:reduce){.active-hand::after,.turn-banner.my-turn::after{animation:none}}
