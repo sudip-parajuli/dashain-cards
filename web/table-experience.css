@@ -136,3 +136,20 @@
 .game-daharmara .seat>span{white-space:normal;overflow-wrap:anywhere}
 @media(orientation:landscape) and (max-height:600px){.table-layout.game-daharmara{grid-template-rows:32px minmax(110px,1fr) 24px 155px auto!important}.game-daharmara .my-hand .playing-card{max-height:90px}.game-daharmara .my-hand{padding-top:8px;padding-bottom:14px}}
 @media(orientation:landscape) and (max-height:360px){.table-layout.game-daharmara{grid-template-rows:28px minmax(75px,1fr) 20px 125px auto!important}.game-daharmara .my-hand .playing-card{max-height:65px}.game-daharmara .seat{max-height:52px}.game-daharmara .seat>span{font-size:8px}}
+/* Landscape controls must fit the hand track, including the waiting state. */
+@media(orientation:landscape) and (max-height:600px){
+ .game-faras .hand-area{grid-template-rows:20px minmax(0,1fr);min-height:0;gap:2px 6px;padding:3px 8px}
+ .game-faras .faras-pad{grid-template-columns:repeat(3,48px);grid-template-rows:repeat(2,44px);gap:4px 8px;align-self:center;justify-self:center;padding:0;min-height:0}
+ .game-faras .faras-pad button{width:48px;height:44px;min-height:44px;padding:3px;border-radius:50%;font-size:10px}
+ .game-faras .faras-pad [data-action=farasbet]{grid-row:1;grid-column:1}
+ .game-faras .faras-pad [data-action=farasraise]{grid-row:1;grid-column:2}
+ .game-faras .faras-pad [data-action=farasshow]{grid-row:1;grid-column:3}
+ .game-faras .faras-pad [data-action=faraslook]{grid-row:2;grid-column:1}
+ .game-faras .faras-pad [data-action=farasfold]{grid-row:2;grid-column:3}
+ .game-faras .faras-pad .waiting-turn{grid-row:1;grid-column:1/-1;align-self:center;text-align:center}
+ .game-faras .faras-pad [data-action=advance]{grid-row:2;grid-column:1/-1;width:100%;border-radius:24px}
+ .game-faras .faras-pad [data-action=viewresult]{grid-row:1;grid-column:1/-1;width:100%;border-radius:24px}
+ .game-faras .faras-pad [data-action=nextdeal]{grid-row:2;grid-column:1/-1;width:100%;border-radius:24px}
+ .game-faras .my-hand{height:100%;min-height:0;padding:3px 0 13px;align-items:center}
+ .game-faras .my-hand .playing-card{width:auto;height:clamp(56px,20dvh,94px);max-height:calc(100% - 12px);aspect-ratio:5/7}
+}
