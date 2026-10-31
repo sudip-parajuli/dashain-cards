@@ -1,6 +1,6 @@
 # Play release preparation — 29 October 2026
 
-Package: `com.dashaincards.app`. Current version 1.9.0, version code 39. Android 8+ (min SDK 26), compile/target SDK 36. The first internal release was published on 29 October 2026 and Play Console reports it active and available to internal testers. Tester membership is managed in Play Console. Public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
+Package: `com.dashaincards.app`. Current version 1.9.2, version code 41. Android 8+ (min SDK 26), compile/target SDK 36. The first internal release was published on 29 October 2026 and Play Console reports it active and available to internal testers. Tester membership is managed in Play Console. Public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
 
 ## Build and verification
 
@@ -95,3 +95,14 @@ Manual hand rearrangement persists through renders and online snapshots. Marriag
 190 automated tests passed. Browser checks verified manual Marriage/Dahar card dragging and Faras pack flights; desktop layouts were inspected and a conflicting Dahar landscape rule was corrected. Dahar phone-frame layouts were inspected at 390×844 and 844×390; this exposed clipped seat labels and a hand-heading overlap, which received targeted wrapping/spacing fixes. Physical Android verification remains required before public release. Signed APK asset/source hashes and Google bundletool validation passed. Final AAB SHA-256: `c407cbd55d65f40298abfd62dd8cc171af55bc8bf131a47951ea0e133302b7b2`. The final web deployment is bdb9a63a-dcce-4535-8022-f139f07a81d2, serving offline cache v72.
 
 Play Console reports release 1.9.0 — gameplay and table refinements (code 39) Active and Available to internal testers on 31 October 2026. Only the optional deobfuscation-file warning remains; this build does not obfuscate. This is an internal rollout, not public production approval.
+
+## 1.9.2 / code 41 — 31 October 2026
+
+Home screen tile grid redesigned: navy gradient headers matching the hero section, game-specific playing-card fans, 3-column desktop / 2-column mobile / 1-column narrow layout. Marriage header shows three Joker Tannela cards (custom joker card with 🃏 face and vertical JOKER text). Kitti header shows 9 cards across three sets: Trial (A♠A♥A♦), Sequence (7♣8♣9♣), Jutt (2♦6♦J♦). Rules "?" button repositioned as a gold circle inside the header, always visible. Tile entrance animation staggered per tile.
+
+Kitti Salami (all-three-sets win) now pays double — fixed a chip-balance edge case where an all-tie (all scores zero) was incorrectly applying the salami multiplier to losers with no winner to receive it, causing settlement validation to reject the transfer. 190 automated tests pass.
+
+Faras hand fan preserved (cascading overlap, not flat row); cards scale down on small screens. Game state persistence: every game auto-saves to localStorage on exit, with Resume buttons on home tiles and hero section. Jutpatti win panel shows a sorted card fan instead of grouped rows. Marriage win panel includes the maal (tip) card. Faras win panel shows all players with winner highlighted.
+
+Signed AAB SHA-256: `930a7191c783404be4d6d7af83cbf8bed3a5acb84fcbdfb67a53ba6a2fe5c660`. APK recursive asset/source hashes and bundletool validation passed. Android lint has zero errors and five nonblocking warnings (unchanged from prior releases). Cloudflare deployment pending token. No physical-device test was performed.
+
