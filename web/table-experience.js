@@ -1,4 +1,4 @@
-import {localize} from './i18n.js';
+﻿﻿import {localize} from './i18n.js';
 import {playerName} from './core.js';
 const local=new WeakMap(),online=new Map(),dealt=new Set();let intro=null;try{for(const id of JSON.parse(sessionStorage.getItem('dashain-deal-motion')||'[]'))if(typeof id==='string')dealt.add(id);}catch{}
 export function roundWinners(g){
@@ -18,9 +18,95 @@ export function celebrationPayout(g,viewer=0,presentation={}){
  return {delta,unit,value,amount:online&&Number.isFinite(presentation.chipValue)?'Rs '+format(delta*presentation.chipValue):null,returned:!online&&viewer===0&&entry?.pot&&!entry.rules?.coinsPerPoint&&Number.isFinite(entry.returned)&&entry.returned>0?format(entry.returned):null};
 }
 function celebration(g,viewer,root,audio,presentation){
- const winners=roundWinners(g),reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;if(!winners.length){celebrationDialog(g,viewer,root,audio,presentation);return;}const table=root.querySelector('.table-layout'),identity=table?.dataset.dealPresentation,stage=document.createElement('div');stage.className='table-fireworks';stage.setAttribute('aria-hidden','true');for(let burst=0;burst<5;burst++)for(let i=0;i<20;i++){const spark=document.createElement('i'),angle=i*Math.PI/10;spark.style.cssText=`--burst-x:${20+(burst*23)%65}%;--burst-y:${20+(burst*17)%45}%;--spark-x:${Math.cos(angle)*140}px;--spark-y:${Math.sin(angle)*140}px;--spark-delay:${burst*.32}s;--spark-colour:${['#ffdf7d','#f590b5','#86ead1'][burst%3]}`;stage.append(spark);}table?.append(stage);audio.play('fireworks');setTimeout(()=>{stage.remove();if(root.querySelector('.table-layout')?.dataset.dealPresentation===identity&&root.querySelector('#table-result'))celebrationDialog(g,viewer,root,audio,presentation);},reduced?500:2400);
+ const winners=roundWinners(g),reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if(!winners.length){celebrationDialog(g,viewer,root,audio,presentation,null);return;}
+ const overlay=document.createElement('div');overlay.className='fireworks-overlay';overlay.setAttribute('aria-hidden','true');
+ const COLOURS=['#ffdf7d','#f590b5','#86ead1','#ff8c69','#a8edea','#ffd700'];
+ const BURST_COUNT=reduced?0:14;
+ for(let burst=0;burst<BURST_COUNT;burst++){
+  const bx=5+(burst*31)%90,by=5+(burst*17)%75;
+  for(let i=0;i<24;i++){const spark=document.createElement('i'),angle=i*Math.PI/12,dist=100+Math.random()*120;
+   spark.style.cssText='--bx:'+bx+'%;--by:'+by+'%;--sx:'+Math.cos(angle)*dist+'px;--sy:'+Math.sin(angle)*dist+'px;--sd:'+(burst*0.22+i*0.04).toFixed(2)+'s;--sc:'+COLOURS[(burst+i)%COLOURS.length];
+   overlay.append(spark);}
+ }
+ document.body.append(overlay);
+ let firecrackerTimer=null;
+ function loopFirecrackers(){audio.play('fireworks');firecrackerTimer=setTimeout(loopFirecrackers,1800);}
+ if(!reduced)loopFirecrackers();
+ function onDialogClose(){overlay.remove();clearTimeout(firecrackerTimer);}
+ setTimeout(()=>{celebrationDialog(g,viewer,root,audio,presentation,onDialogClose);},reduced?200:900);
 }
-function celebrationDialog(g,viewer,root,audio,presentation){
+
+// Show the winning cards in the celebration dialog.
+function buildWinnerCards(g,viewer,winners){
+ if(!winners||!winners.length)return null;
+ const w=winners[0];
+ const panel=document.createElement('div');panel.className='victory-cards';
+ const suitMap={S:'\u2660',H:'\u2665',D:'\u2666',C:'\u2663'};
+ const rankMap={14:'A',13:'K',12:'Q',11:'J',10:'10'};
+ function makeCard(c){
+  const el=document.createElement('span');
+  const r=rankMap[c.r]||String(c.r),s=suitMap[c.s]||c.s;
+  const red=c.s==='H'||c.s==='D';
+  el.className='vc-card'+(red?' red':'');
+  el.innerHTML='<span class="vc-rank">'+r+'</span><span class="vc-suit">'+s+'</span>';
+  return el;
+ }
+ function addGroup(cards,label){
+  const row=document.createElement('div');row.className='vc-group';
+  if(label){const lbl=document.createElement('small');lbl.className='vc-label';lbl.textContent=label;row.append(lbl);}
+  for(const c of cards)row.append(makeCard(c));panel.append(row);
+ }
+ try{
+  const type=g.type;
+  if(type==='jutpatti'){
+   // Show all cards as one sorted fan - sort wilds first, then pairs together, singles last
+   const hand=(g.hand[w]||[]).slice(),wild=g.wild;
+   const counts={};hand.forEach(function(c){var k=c.r===wild?'wild':String(c.r);counts[k]=(counts[k]||0)+1;});
+   hand.sort(function(a,b){
+    var ak=a.r===wild?'wild':String(a.r),bk=b.r===wild?'wild':String(b.r);
+    var ac=counts[ak]||1,bc=counts[bk]||1;
+    if(ac!==bc)return bc-ac;// pairs first
+    return a.r===wild?-1:b.r===wild?1:b.r-a.r;
+   });
+   addGroup(hand,'');
+  }else if(type==='marriage'){
+   // Show maal card
+   if(g.tip){addGroup([g.tip],'Maal card ★');}
+   // Show winner's exposed melds
+   const exposed=g.exposed&&g.exposed[w]?g.exposed[w]:[];
+   if(exposed.length)addGroup(exposed,'Exposed melds');
+   // Show remaining hand
+   const expIds=new Set(exposed.map(function(c){return c.id;}));
+   const hand=(g.hand[w]||[]).filter(function(c){return !expIds.has(c.id);});
+   if(hand.length)addGroup(hand,'Hand');
+  }else if(type==='dhumbal'){
+   const hand=g.hand[w]||[];if(hand.length)addGroup(hand,'Called hand');
+  }else if(type==='kitti'){
+   const groups=g.allGroups&&g.allGroups[w]?g.allGroups[w]:[];
+   groups.forEach(function(grp,i){addGroup(grp,'Set '+(i+1));});
+  }else if(type==='daharmara'||type==='callbreak'){
+   for(const p of winners){
+    const hand=g.hand[p]||[];
+    const row=document.createElement('div');row.className='vc-group';
+    const lbl=document.createElement('small');lbl.className='vc-label';
+    if(typeof playerName==='function'){lbl.setAttribute('data-user-text','');lbl.textContent=playerName(g,p);}
+    row.append(lbl);for(const c of hand)row.append(makeCard(c));panel.append(row);
+   }
+  }else if(type==='faras'){
+   // Show all players' hands with winner highlighted
+   for(var fp=0;fp<g.hand.length;fp++){
+    const hand=g.hand[fp]||[];if(!hand.length)continue;
+    const row=document.createElement('div');row.className='vc-group'+(winners.includes(fp)?' vc-winner':'');
+    const lbl=document.createElement('small');lbl.className='vc-label';
+    if(typeof playerName==='function'){lbl.setAttribute('data-user-text','');lbl.textContent=playerName(g,fp)+(winners.includes(fp)?' ★':'');}
+    row.append(lbl);for(const c of hand)row.append(makeCard(c));panel.append(row);
+   }
+  }
+ }catch(e){}
+ return panel.childElementCount?panel:null;
+}
+function celebrationDialog(g,viewer,root,audio,presentation,onDialogClose){
  const winners=roundWinners(g),won=winners.includes(viewer),dialog=document.createElement('dialog');dialog.className='win-celebration';
  const crown=document.createElement('div');crown.className='victory-crown';crown.textContent=winners.length?'♛':'✦';crown.setAttribute('aria-hidden','true');
  const eyebrow=document.createElement('p');eyebrow.className='victory-eyebrow';eyebrow.textContent=won?'WHAT A HAND!':'ONE MORE ROUND?';
@@ -34,7 +120,9 @@ function celebrationDialog(g,viewer,root,audio,presentation){
  const detail=document.createElement('button');detail.textContent='See round scores';detail.addEventListener('click',()=>{dialog.close();root.querySelector('#table-result')?.showModal();});
  const close=document.createElement('button');close.className='secondary';close.textContent='Back to table';close.addEventListener('click',()=>dialog.close());buttons.append(detail,close);
  const confetti=document.createElement('div');confetti.className='victory-confetti';confetti.setAttribute('aria-hidden','true');for(let i=0;i<36;i++){const bit=document.createElement('i');bit.style.cssText=`--i:${i};--x:${(i*37)%100}%;--delay:${(i%9)*.075}s;--hue:${[42,12,156,270][i%4]}`;confetti.append(bit);}
- dialog.append(confetti,crown,eyebrow,title,money,note,buttons);dialog.addEventListener('close',()=>dialog.remove(),{once:true});document.body.append(dialog);localize(dialog);dialog.showModal();
+ dialog.append(confetti,crown,eyebrow,title,money,note,buttons);dialog.addEventListener('close',()=>{dialog.remove();onDialogClose&&onDialogClose();},{once:true});
+ const cardsPanel=buildWinnerCards(g,viewer,winners);if(cardsPanel)dialog.insertBefore(cardsPanel,buttons);
+ document.body.append(dialog);localize(dialog);dialog.showModal();
  // Audio observation owns the once-per-result cue; opening a scoreboard never repeats it.
 }
 function deal(g,viewer,root,audio,onDone){

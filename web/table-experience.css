@@ -92,7 +92,7 @@
 .table-layout.game-kitti .kitti-inline-hand{padding-top:38px;padding-bottom:28px;min-height:calc(var(--kitti-card)*1.4 + 66px)}
 .table-layout.game-kitti .my-hand .kitti-bundle .playing-card{--fan-lift:6px!important;transform:translateY(6px) rotate(calc(var(--fan-angle,0deg)*.65))}
 .victory-payout{display:grid;gap:3px;margin:16px 0;color:#ffe0a0}.victory-payout strong{font-size:32px;line-height:1.1}.victory-payout small{font-size:11px;color:#d3dce9}.next-deal-choice .actions{display:flex;flex-wrap:wrap;gap:10px}.next-deal-choice button{min-height:44px}
-.win-celebration{max-height:94dvh}
+.win-celebration{max-height:94dvh;overflow-y:auto;scrollbar-width:thin}
 @media(orientation:landscape) and (max-height:480px){
  .win-celebration[open]{width:min(700px,92vw);max-width:92vw;display:grid;grid-template-columns:96px minmax(0,1fr);column-gap:16px;padding:18px}
  .win-celebration .victory-crown{grid-column:1;grid-row:1/5;font-size:70px}
@@ -136,20 +136,145 @@
 .game-daharmara .seat>span{white-space:normal;overflow-wrap:anywhere}
 @media(orientation:landscape) and (max-height:600px){.table-layout.game-daharmara{grid-template-rows:32px minmax(110px,1fr) 24px 155px auto!important}.game-daharmara .my-hand .playing-card{max-height:90px}.game-daharmara .my-hand{padding-top:8px;padding-bottom:14px}}
 @media(orientation:landscape) and (max-height:360px){.table-layout.game-daharmara{grid-template-rows:28px minmax(75px,1fr) 20px 125px auto!important}.game-daharmara .my-hand .playing-card{max-height:65px}.game-daharmara .seat{max-height:52px}.game-daharmara .seat>span{font-size:8px}}
-/* Landscape controls must fit the hand track, including the waiting state. */
-@media(orientation:landscape) and (max-height:600px){
- .game-faras .hand-area{grid-template-rows:20px minmax(0,1fr);min-height:0;gap:2px 6px;padding:3px 8px}
- .game-faras .faras-pad{grid-template-columns:repeat(3,48px);grid-template-rows:repeat(2,44px);gap:4px 8px;align-self:center;justify-self:center;padding:0;min-height:0}
- .game-faras .faras-pad button{width:48px;height:44px;min-height:44px;padding:3px;border-radius:50%;font-size:10px}
- .game-faras .faras-pad [data-action=farasbet]{grid-row:1;grid-column:1}
- .game-faras .faras-pad [data-action=farasraise]{grid-row:1;grid-column:2}
- .game-faras .faras-pad [data-action=farasshow]{grid-row:1;grid-column:3}
- .game-faras .faras-pad [data-action=faraslook]{grid-row:2;grid-column:1}
- .game-faras .faras-pad [data-action=farasfold]{grid-row:2;grid-column:3}
- .game-faras .faras-pad .waiting-turn{grid-row:1;grid-column:1/-1;align-self:center;text-align:center}
- .game-faras .faras-pad [data-action=advance]{grid-row:2;grid-column:1/-1;width:100%;border-radius:24px}
- .game-faras .faras-pad [data-action=viewresult]{grid-row:1;grid-column:1/-1;width:100%;border-radius:24px}
- .game-faras .faras-pad [data-action=nextdeal]{grid-row:2;grid-column:1/-1;width:100%;border-radius:24px}
- .game-faras .my-hand{height:100%;min-height:0;padding:3px 0 13px;align-items:center}
- .game-faras .my-hand .playing-card{width:auto;height:clamp(56px,20dvh,94px);max-height:calc(100% - 12px);aspect-ratio:5/7}
+
+/* ---------------------------------------------------------------
+   Turn banner: centred with hint text below on its own line.
+--------------------------------------------------------------- */
+.table-status{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;overflow:visible}
+.table-status .turn-banner{display:inline-block}
+.table-hint{display:block;font-size:11px;color:#b9d0ab;line-height:1.45;max-width:340px;margin:0 auto}
+@media(orientation:landscape) and (min-width:560px){.table-hint{font-size:9px;max-width:260px}}
+
+/* ---------------------------------------------------------------
+   Table middle: always centred with equal margins.
+--------------------------------------------------------------- */
+.table-middle{margin-left:auto;margin-right:auto;width:100%}
+
+/* ---------------------------------------------------------------
+   Short-hand action buttons inside the hand area.
+   Portrait: below the cards, centred row.
+   Landscape: vertical strip on the right side.
+--------------------------------------------------------------- */
+@media(orientation:portrait){
+  .inline-action-hand .short-hand-controls{display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:6px;padding:6px 8px 4px;flex-shrink:0}
+  .inline-action-hand .short-hand-controls button{min-height:38px;padding:7px 12px;font-size:12px;background:#e3bd73;color:#173e32;border-radius:12px}
+  .inline-action-hand .short-hand-controls .secondary{background:#ffffff18;color:#f6e6c7}
+  .inline-action-hand .short-hand-controls .waiting-turn{font-size:11px;color:#cfddc0}
 }
+@media(orientation:landscape) and (min-width:560px){
+  .inline-action-hand .hand-area{display:flex;flex-direction:row;align-items:stretch;gap:6px;position:relative}
+  .inline-action-hand .short-hand-controls{display:flex;flex-direction:column;flex-wrap:nowrap;justify-content:center;gap:6px;padding:4px 3px;flex:0 0 110px;align-self:center;flex-shrink:0}
+  .inline-action-hand .short-hand-controls button{width:100%;min-height:36px;padding:6px 8px;font-size:11px;background:#e3bd73;color:#173e32;border-radius:12px}
+  .inline-action-hand .short-hand-controls .secondary{background:#ffffff18;color:#f6e6c7}
+  .inline-action-hand .short-hand-controls .waiting-turn{font-size:10px;color:#cfddc0;text-align:center}
+}
+
+/* ---------------------------------------------------------------
+   Dhumbal landscape: overlapping fan like Jutpatti.
+--------------------------------------------------------------- */
+@media(orientation:landscape) and (min-width:560px){
+  .table-layout.game-dhumbal .my-hand{display:flex;justify-content:center;align-items:end;gap:0;padding:6px 20px 16px}
+  .table-layout.game-dhumbal .my-hand .playing-card{--dh-card-width:clamp(42px,calc((100dvh * .29 - 40px) * .714),90px);width:var(--dh-card-width);max-width:none;max-height:none;height:auto;aspect-ratio:5/7;flex:0 0 var(--dh-card-width);margin:0;transform:translateY(var(--fan-lift,0px)) rotate(calc(var(--fan-angle,0deg) * 1.5))}
+  .table-layout.game-dhumbal .my-hand .playing-card+*{margin-left:calc(var(--dh-card-width) * -.32)}
+  .table-layout.game-dhumbal .my-hand .playing-card.selected,.table-layout.game-dhumbal .my-hand .playing-card:not(.selected):hover{transform:translateY(calc(var(--fan-lift,0px) - 12px)) rotate(calc(var(--fan-angle,0deg) * 1.5))}
+}
+
+/* ---------------------------------------------------------------
+   Kitti landscape: fix text-line spacing / overlap on small screens.
+--------------------------------------------------------------- */
+@media(orientation:landscape) and (min-width:560px){
+  .game-kitti .hand-heading>span{line-height:1.5;white-space:normal;word-break:break-word}
+  .kitti-hand-set>strong{line-height:1.4;margin-bottom:4px;display:block}
+  .kitti-hand-sets{gap:5px}
+}
+@media(orientation:landscape) and (max-height:600px){
+  .game-kitti .hand-heading>span{font-size:9px;line-height:1.5}
+  .kitti-hand-set>strong{font-size:9px;margin-bottom:2px;line-height:1.4}
+  .kitti-hand-set{padding:4px 2px}
+}
+/* ---------------------------------------------------------------
+   Full-screen fireworks overlay (persistent until dialog closes)
+--------------------------------------------------------------- */
+.fireworks-overlay{position:fixed;inset:0;z-index:998;pointer-events:none;overflow:hidden}
+.fireworks-overlay i{position:absolute;left:var(--bx,50%);top:var(--by,30%);width:6px;height:6px;border-radius:50%;background:var(--sc,#ffdf7d);box-shadow:0 0 8px 2px var(--sc,#ffdf7d);animation:fw-burst 1.6s var(--sd,0s) ease-out infinite}
+@keyframes fw-burst{
+  0%{transform:translate(0,0) scale(1);opacity:1}
+  60%{opacity:.8}
+  100%{transform:translate(var(--sx,0),var(--sy,0)) scale(.2);opacity:0}
+}
+@media(prefers-reduced-motion:reduce){.fireworks-overlay{display:none}}
+
+/* ---------------------------------------------------------------
+   Winner cards panel inside the celebration dialog
+--------------------------------------------------------------- */
+.victory-cards{width:100%;overflow-x:auto;scrollbar-width:none;margin:14px 0 4px;display:flex;flex-direction:column;gap:8px;max-height:200px;overflow-y:auto}
+.victory-cards::-webkit-scrollbar{display:none}
+.vc-group{display:flex;flex-wrap:wrap;align-items:center;gap:5px;padding:4px 0}
+.vc-label{display:block;width:100%;font-size:9px;letter-spacing:2px;color:#b0c8d0;text-transform:uppercase;margin-bottom:2px}
+.vc-card{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:34px;height:48px;background:#fffdf4;border-radius:5px;border:1px solid #ccc;font-weight:700;line-height:1;box-shadow:0 2px 4px #0004;flex-shrink:0;gap:1px}
+.vc-card.red{color:#c0101e}
+.vc-card:not(.red){color:#17283f}
+.vc-rank{font-size:13px;line-height:1}
+.vc-suit{font-size:16px;line-height:1}
+@media(orientation:landscape) and (max-height:600px){
+  .victory-cards{max-height:100px}
+  .vc-card{width:26px;height:36px}
+  .vc-rank{font-size:10px}
+  .vc-suit{font-size:12px}
+}
+@media(max-width:380px){
+  .vc-card{width:28px;height:40px}
+  .vc-rank{font-size:11px}
+  .vc-suit{font-size:13px}
+}
+/* ---------------------------------------------------------------
+   Faras game fixes (2026-10-31)
+   1. Hand cards always on one line, no wrap.
+   2. Pad buttons never clip text.
+   3. Showdown overlay passes pointer events through so action
+      buttons below it stay clickable; cards inside stay interactive.
+--------------------------------------------------------------- */
+
+/* Fix 1: keep all 3 faras hand cards in the cascading fan, but scale them
+   down so they always fit in one visual row without wrapping.
+   The hand-area uses a 3-col grid: [wallet 72px] [my-hand] [buttons 184px].
+   Cards get portrait-lift/angle transforms from handCardStyle() creating the fan.
+   We just need:
+   a) hand-area overflow:visible so the fan's outer cards aren't clipped
+   b) card width constrained to the available column width divided by 3
+   c) the my-hand grid still handles column placement (no flex override needed) */
+.game-faras .hand-area{overflow:visible !important}
+.game-faras .my-hand{overflow:visible;padding-bottom:30px}
+.game-faras .my-hand .playing-card{
+  width:min(70px, calc((100vw - 270px) / 3)) !important;
+  min-width:42px;
+  height:auto !important;
+  aspect-ratio:5/7;
+}
+/* Tiny screens (≤400px): shrink further */
+@media(max-width:400px){
+  .game-faras .my-hand .playing-card{
+    width:min(58px, calc((100vw - 220px) / 3)) !important;
+    min-width:38px;
+  }
+}
+
+/* Fix 2: faras-pad buttons must not be smaller than their text */
+.faras-pad button{white-space:nowrap;width:auto;min-width:fit-content}
+
+/* Fix 3: showdown overlay does not block pointer events;
+   individual cards and elements inside it remain clickable */
+.faras-showdown{pointer-events:none}
+.faras-showdown *{pointer-events:auto}
+
+/* -- Victory cards: Faras winner highlight ----------------------------------- */
+.vc-winner .vc-label{color:#ffd700;font-weight:bold}
+.vc-winner .vc-card{box-shadow:0 0 0 2px #ffd700,0 2px 4px #0004}
+
+/* -- Victory cards: Jutpatti fan layout (single row, overlapping) ----------- */
+.victory-cards .vc-group{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+.victory-cards .vc-group .vc-card+.vc-card{margin-left:-14px}
+.victory-cards .vc-group .vc-label:empty{display:none}
+
+/* -- Marriage maal label ---------------------------------------------------- */
+.vc-label{white-space:nowrap}

@@ -57,7 +57,7 @@ export function resolveKitti(g,all){const low=g.options.aceLowBest||false;g.allG
  const four=g.hand.map(h=>Math.max(...h.map(c=>h.filter(x=>x.r===c.r).length))>=4?h.find(c=>h.filter(x=>x.r===c.r).length===4).r:0);
  let winner=null;const wins=[];if(four.some(Boolean)){const max=Math.max(...four);winner=four.indexOf(max);g.message=`${playerName(g,winner)} wins with four of a kind.`;}
  else {for(let r=0;r<3;r++){let best=[0],v=threeRank(all[0][r],low);for(let p=1;p<g.hand.length;p++){const cmp=compare(threeRank(all[p][r],low),v);if(cmp>0){best=[p];v=threeRank(all[p][r],low);}else if(!cmp)best.push(p);}wins.push(best.length===1?best[0]:null);}if(g.options.anyTwo){winner=g.hand.map((_,p)=>p).find(p=>wins.filter(w=>w===p).length>=2)??null;}else if(wins[1]!==null&&(wins[0]===wins[1]||wins[2]===wins[1]))winner=wins[1];g.message=winner===null?'Kitti: no winner this deal.':`${playerName(g,winner)} wins${wins.every(w=>w===winner)?' with a Salami!':'.'}`;}
- g.winner=winner;g.showingWinners=wins;g.scores=g.hand.map(()=>0);if(winner!==null)g.scores[winner]=1;g.over=true;g.phase='result';
+ const isSalami=winner!==null&&wins.every(w=>w===winner);g.salami=isSalami;g.winner=winner;g.showingWinners=wins;g.scores=g.hand.map(()=>0);if(winner!==null)g.scores[winner]=isSalami?2:1;g.over=true;g.phase='result';
 }
 export function revealFaras(g){const ranks=g.hand.map(h=>threeRank(h,g.options.aceLowBest??true));let best=[0];for(let p=1;p<3;p++){const c=compare(ranks[p],ranks[best[0]]);if(c>0)best=[p];else if(!c)best.push(p);}g.scores=g.hand.map((_,p)=>best.includes(p)?1/best.length:0);g.over=true;g.message=best.length>1?'Tied best hands share one practice point.':`${playerName(g,best[0])} has the strongest hand.`;}
 

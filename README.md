@@ -2,7 +2,7 @@
 
 Seven Nepali card games, one place to play and keep score. Built around the Dashain tradition of gathering around a table, with English and Nepali interfaces, offline bot games, online friends rooms and shared live scorekeepers.
 
-**[Try the live app](https://www.techwiredsolutions.com.np/dashaincards)** · Version 1.9.1 · Android internal testing
+**[Try the live app](https://www.techwiredsolutions.com.np/dashaincards)** · Version 1.9.0 · Android internal testing
 
 ![Marriage in landscape](docs/screenshots/landscape.png)
 

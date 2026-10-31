@@ -1,6 +1,6 @@
 # Play release preparation — 29 October 2026
 
-Package: `com.dashaincards.app`. Current version 1.9.1, version code 40. Android 8+ (min SDK 26), compile/target SDK 36. The first internal release was published on 29 October 2026 and Play Console reports it active and available to internal testers. Tester membership is managed in Play Console. Public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
+Package: `com.dashaincards.app`. Current version 1.9.0, version code 39. Android 8+ (min SDK 26), compile/target SDK 36. The first internal release was published on 29 October 2026 and Play Console reports it active and available to internal testers. Tester membership is managed in Play Console. Public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
 
 ## Build and verification
 
@@ -95,9 +95,3 @@ Manual hand rearrangement persists through renders and online snapshots. Marriag
 190 automated tests passed. Browser checks verified manual Marriage/Dahar card dragging and Faras pack flights; desktop layouts were inspected and a conflicting Dahar landscape rule was corrected. Dahar phone-frame layouts were inspected at 390×844 and 844×390; this exposed clipped seat labels and a hand-heading overlap, which received targeted wrapping/spacing fixes. Physical Android verification remains required before public release. Signed APK asset/source hashes and Google bundletool validation passed. Final AAB SHA-256: `c407cbd55d65f40298abfd62dd8cc171af55bc8bf131a47951ea0e133302b7b2`. The final web deployment is bdb9a63a-dcce-4535-8022-f139f07a81d2, serving offline cache v72.
 
 Play Console reports release 1.9.0 — gameplay and table refinements (code 39) Active and Available to internal testers on 31 October 2026. Only the optional deobfuscation-file warning remains; this build does not obfuscate. This is an internal rollout, not public production approval.
-
-## 1.9.1 / code 40 — 31 October 2026
-
-Faras landscape actions now use two compact rows instead of a three-row pad that overflowed the hand area. Continue opponents is centred in the right-side controls. The hand grid can shrink to its allocated height; waiting and result controls no longer create a third row. Card heights also fit the landscape hand track.
-
-Browser checks at 844×390 and 740×320 verified all five action buttons inside the viewport. On the 320px-high screen, Show occupies y208–252 and Continue opponents y256–300. No gameplay logic changed. Source security checks and signed build validation are recorded with the final rollout below.
