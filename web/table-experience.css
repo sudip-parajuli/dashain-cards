@@ -133,3 +133,6 @@
 @media(orientation:landscape) and (max-height:600px){.table-layout.game-daharmara{grid-template-rows:32px minmax(145px,1fr) 24px minmax(105px,.65fr) auto!important}.game-daharmara .seat{min-height:45px;max-height:65px}.game-daharmara .seat .player-avatar{width:20px;height:20px}.game-daharmara .seat>strong{font-size:10px}.game-daharmara .seat>span{font-size:9px}.game-daharmara .table-middle{padding-top:60px}}
 .middle-closed{position:absolute;bottom:18px;left:50%;display:flex;transform:translateX(-50%);pointer-events:none}.middle-closed .playing-card{width:30px!important;height:42px!important;margin-left:-18px;transform:rotate(-8deg)}
 @media(min-width:761px){.game-faras .hand-area{grid-template-columns:184px minmax(0,1fr) 184px}}
+.game-daharmara .seat>span{white-space:normal;overflow-wrap:anywhere}
+@media(orientation:landscape) and (max-height:600px){.table-layout.game-daharmara{grid-template-rows:32px minmax(110px,1fr) 24px 155px auto!important}.game-daharmara .my-hand .playing-card{max-height:90px}.game-daharmara .my-hand{padding-top:8px;padding-bottom:14px}}
+@media(orientation:landscape) and (max-height:360px){.table-layout.game-daharmara{grid-template-rows:28px minmax(75px,1fr) 20px 125px auto!important}.game-daharmara .my-hand .playing-card{max-height:65px}.game-daharmara .seat{max-height:52px}.game-daharmara .seat>span{font-size:8px}}
