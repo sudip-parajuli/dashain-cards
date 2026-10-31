@@ -1,0 +1,22 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {newGame,discardHuman,drawHuman,cardValue,botDrawTurn} from '../web/games.js';
+import {newDahar,daharPlay,daharLegal} from '../web/dahar.js';
+import {rememberHand,restoreHand,sortHand} from '../web/hand-sort.js';
+import {newMarriage,marriageBot} from '../web/marriage.js';
+const c=(r,s='S',id='0'+s+r)=>({r,s,id});
+const conserved=g=>{const cards=[...g.hand.flat(),...g.stock,...g.pile];assert.equal(cards.length,52);assert.equal(new Set(cards.map(c=>c.id)).size,52);};
+test('Dhumbal defaults discard first, rank faces, and deny a single-card discard pickup',()=>{const g=newGame('dhumbal');assert.equal(g.phase,'discard');assert.deepEqual([11,12,13,14].map(r=>cardValue(c(r))),[11,12,13,1]);assert.throws(()=>drawHuman(g,'stock'));discardHuman(g,[g.hand[0][0].id]);assert.equal(g.turn,0);assert.throws(()=>drawHuman(g,'pile'),/unlock/);drawHuman(g,'stock');assert.equal(g.turn,1);assert.equal(g.hand[0].length,5);conserved(g);});
+test('Dhumbal accepts suited runs and takes previous discard, never own new dump',()=>{const g=newGame('dhumbal');g.hand[0]=[c(4),c(5),c(6),c(12),c(13)];g.pile=[c(2,'H')];const previous=g.pile[0].id;discardHuman(g,g.hand[0].slice(0,3).map(c=>c.id));assert.equal(g.hand[0].length,2);drawHuman(g,'pile');assert.equal(g.hand[0].at(-1).id,previous);assert.equal(g.pile.at(-1).r,6);assert.equal(g.hand[0].length,3);});
+test('Dhumbal bots complete discard/draw turns without duplicating cards',()=>{for(let i=0;i<30;i++){const g=newGame('dhumbal');for(let n=0;n<80&&!g.over;n++){if(g.turn===0){discardHuman(g,[g.hand[0][0].id]);drawHuman(g,'stock');}else botDrawTurn(g);conserved(g);}}});
+function trick(g,winner){g.turn=winner;g.hand=Array.from({length:4},(_,p)=>[c(p===winner?14:2+p,'S',String(g.tricksDone)+'-'+p)]);for(let n=0;n<4;n++){const p=g.turn;daharPlay(g,p,g.hand[p][0].id);}}
+test('Dahar full deal and individual consecutive capture, not partners',()=>{const g=newDahar({trump:'H'});assert.deepEqual(g.hand.map(h=>h.length),[13,13,13,13]);trick(g,0);assert.equal(g.middle.length,4);trick(g,2);assert.equal(g.middle.length,8);trick(g,2);assert.equal(g.captured[0].length,12);assert.equal(g.lastTrickWinner,2);assert.equal(g.trickSequence,1);});
+test('Dahar final sweep and 2–2 tens tie uses actual trick majority',()=>{const g=newDahar({trump:'H'});g.tricksDone=12;g.teamTricks=[3,9];g.captured=[[c(10,'S'),c(10,'H')],[c(10,'C'),c(10,'D')]];trick(g,0);assert.equal(g.over,true);assert.equal(g.teamWinner,1);assert.equal(g.captured[0].length,6);});
+test('Dahar legal full rounds conserve all cards and four tens',()=>{for(let i=0;i<30;i++){const g=newDahar();while(!g.over){const p=g.turn;daharPlay(g,p,daharLegal(g,p)[0].id);}assert.equal(g.captured.flat().length,52);assert.equal(g.captured.flat().filter(c=>c.r===10).length,4);assert.equal(g.teamTricks.reduce((a,b)=>a+b),13);}});
+test('Manual hand ordering survives snapshots and newly drawn cards; sort resets it',()=>{const g=newGame('jutpatti');g.handOrderKey='test-room-1';g.hand[0].reverse();const ids=g.hand[0].map(c=>c.id);rememberHand(g);const snapshot=structuredClone(g);delete snapshot.manualOrder;snapshot.hand[0].reverse();snapshot.hand[0].push(snapshot.stock.pop());assert.equal(restoreHand(snapshot),true);assert.deepEqual(snapshot.hand[0].slice(0,5).map(c=>c.id),ids);sortHand(g);assert.equal(restoreHand(g),false);});
+test('Unseen Marriage bots retain visible Master and Putali when ordinary discards exist',()=>{for(let i=0;i<20;i++){const g=newMarriage({players:4,printedJokers:true,masterEnabled:true});g.hand[1]=[c(15,'J','0J15'),c(16,'M','0M16'),c(3,'H'),c(8,'S'),c(12,'D')];g.turn=1;marriageBot(g);assert.ok(g.hand[1].some(c=>c.r===15));assert.ok(g.hand[1].some(c=>c.r===16));}});
+
+import {newFaras,farasAction} from '../web/faras.js';
+test('Faras showdown order begins with requester and excludes packed seats',()=>{const g=newFaras({players:3});farasAction(g,0,'fold');assert.equal(g.packSequence,1);assert.equal(g.lastPacked,0);farasAction(g,1,'show');assert.deepEqual(g.showOrder,[1,2]);assert.equal(g.over,true);assert.equal(g.bank.reduce((a,b)=>a+b),600);});
+
+import {firecrackerSamples} from '../web/audio.js';
+test('Firecracker burst is finite, bounded and decays',()=>{const a=firecrackerSamples(8000);assert.equal(a.length,5200);assert.ok(a.every(n=>Number.isFinite(n)&&Math.abs(n)<=1));const energy=s=>s.reduce((n,v)=>n+v*v,0)/s.length;assert.ok(energy(a.slice(0,800))>energy(a.slice(-800))*20);});

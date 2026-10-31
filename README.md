@@ -2,7 +2,7 @@
 
 Seven Nepali card games, one place to play and keep score. Built around the Dashain tradition of gathering around a table, with English and Nepali interfaces, offline bot games, online friends rooms and shared live scorekeepers.
 
-**[Try the live app](https://www.techwiredsolutions.com.np/dashaincards)** · Version 1.8.0 · Android internal testing
+**[Try the live app](https://www.techwiredsolutions.com.np/dashaincards)** · Version 1.9.0 · Android internal testing
 
 ![Marriage in landscape](docs/screenshots/landscape.png)
 
@@ -133,3 +133,5 @@ Every game now opens with a shuffle/deal sequence and celebrates completed deals
 ## Version 1.7.1
 
 Kitti now keeps a single hand with separated three-card bundles. Choose two sets; the final three cards form the last set automatically. Drag the eligible bundle onto the table to reveal it (tapping or keyboard activation is an accessible alternative). Revealed sets leave the hand, and each completed showing animates the public cards toward its winner before the final celebration. Online reveals validate the selected set index and preserve hidden-set privacy.
+
+Gameplay changes and supported rules: [Gameplay refinements](docs/GAMEPLAY_REFINEMENTS.md).

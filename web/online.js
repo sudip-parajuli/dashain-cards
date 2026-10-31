@@ -11,6 +11,9 @@ export function validateRoom(result){
  if(!meta||n<meta.min||n>meta.max||!Array.isArray(g.hand)||g.hand.length!==n||!Number.isInteger(g.turn)||g.turn<0||g.turn>=n||!phases[g.type].includes(g.phase)||!numbers(g.scores)||typeof g.over!=='boolean')fail();
  for(let p=0;p<n;p++){const visible=g.over||p===result.viewer&&(g.type!=='faras'||g.seen?.[p]);if(!Array.isArray(g.hand[p])||g.hand[p].length>(g.type==='callbreak'?26:22)||g.hand[p].some(c=>visible?!card(c):c!==null))fail();if(visible&&new Set(g.hand[p].map(c=>c.id)).size!==g.hand[p].length)fail();}
  if(!Array.isArray(g.exposed)||g.exposed.length!==n||g.exposed.some(h=>!Array.isArray(h)||h.length>21||h.some(c=>!card(c)))||!Array.isArray(g.pile)||g.pile.length>1||g.pile.some(c=>!card(c))||(g.tip!==null&&!card(g.tip)))fail();
+ if(g.type==='dhumbal'){if(g.shed!==undefined&&!bools(g.shed))fail();if(g.previousDump!==null&&g.previousDump!==undefined&&(!Array.isArray(g.previousDump)||g.previousDump.length>1||!g.previousDump.every(card)))fail();}
+ if(g.type==='daharmara'){for(const key of ['capturedTens','capturedCounts','teamTricks'])if(g[key]!==undefined&&(!Array.isArray(g[key])||g[key].length!==2||g[key].some(v=>!Number.isInteger(v)||v<0||v>52)))fail();}
+ if(g.type==='faras'&&g.showOrder!==null&&g.showOrder!==undefined&&(!Array.isArray(g.showOrder)||g.showOrder.length>n||new Set(g.showOrder).size!==g.showOrder.length||g.showOrder.some(p=>!Number.isInteger(p)||p<0||p>=n)))fail();
  if(g.type==='marriage'){
   if(!bools(g.seen)||!bools(g.dubleeMode)||!g.over&&!g.seen[result.viewer]&&g.tip!==null)fail();
   if(g.openingGroups!==undefined&&(!Array.isArray(g.openingGroups)||g.openingGroups.length!==n||g.openingGroups.some(a=>!groups(a))))fail();

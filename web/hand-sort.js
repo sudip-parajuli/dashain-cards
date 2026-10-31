@@ -32,4 +32,10 @@ export function handArrangement(g,p=0,mode='auto'){
  groups.forEach((group,i)=>group.forEach(c=>{if(!marks.has(c.id))marks.set(c.id,`group-${i%3}`);}));
  return {cards:[...groups.flat(),...rest],groups,marks,label};
 }
-export function sortHand(g,p=0,mode='auto'){const arrangement=handArrangement(g,p,mode);g.hand[p]=arrangement.cards;return arrangement;}
+export function sortHand(g,p=0,mode='auto'){clearManualHand(g,p);const arrangement=handArrangement(g,p,mode);g.hand[p]=arrangement.cards;return arrangement;}
+
+const manualHands=new Map();
+const manualKey=(g,p)=>g.type+':'+p+':'+(g.handOrderKey||g.coinRound?.id||g.createdAt||(g.createdAt=Date.now()+':'+Math.random()));
+export function rememberHand(g,p=0){const ids=g.hand[p].filter(Boolean).map(c=>c.id);manualHands.set(manualKey(g,p),ids);if(manualHands.size>50)manualHands.delete(manualHands.keys().next().value);g.manualOrder=ids;}
+export function restoreHand(g,p=0){const ids=g.manualOrder||manualHands.get(manualKey(g,p));if(!ids||!g.hand[p].some(c=>c&&ids.includes(c.id)))return false;const order=new Map(ids.map((id,i)=>[id,i]));g.hand[p].sort((a,b)=>(order.get(a?.id)??1000)-(order.get(b?.id)??1000));return true;}
+export function clearManualHand(g,p=0){delete g.manualOrder;manualHands.delete(manualKey(g,p));}

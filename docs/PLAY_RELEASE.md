@@ -1,6 +1,6 @@
 # Play release preparation — 29 October 2026
 
-Package: `com.dashaincards.app`. Current version 1.8.0, version code 38. Android 8+ (min SDK 26), compile/target SDK 36. The first internal release was published on 29 October 2026 and Play Console reports it active and available to internal testers. Tester membership is managed in Play Console. Public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
+Package: `com.dashaincards.app`. Current version 1.9.0, version code 39. Android 8+ (min SDK 26), compile/target SDK 36. The first internal release was published on 29 October 2026 and Play Console reports it active and available to internal testers. Tester membership is managed in Play Console. Public production is not enabled yet. This personal account requires a closed test with at least 12 continuously opted-in testers for 14 days before applying for production access.
 
 ## Build and verification
 
@@ -87,3 +87,9 @@ Cards appear progressively during distribution, Call Break tricks animate toward
 Verification: 180 automated tests passed; isolated local workerd checks completed a full five-round match with private hands, unchanged intermediate balances and balanced final transfers. Browser checks covered progressive card visibility, trick collection, round-points details, round advancement and active-turn highlighting. Signed APK recursive asset/hash checks and bundletool validation passed. Android lint has zero errors and five nonblocking warnings. No physical-device test was performed.
 
 Signed AAB SHA-256: `b243b56452b14c1633ee06a53a885140cde5c012a8d00200a994118a0f00e39e`. Play Console accepted code 38 and reports release “1.8.0 — five-round Call Break matches” Active and Available to internal testers on 30 October 2026. The only Play warning is the optional missing deobfuscation file; this build is not obfuscated. Cloudflare deployment aeab5c2c-0eab-4eb6-999c-baf72900cf9b serves the matching web version and service worker v70. This is not a public production release.
+
+## 1.9.0 / code 39 — 31 October 2026
+
+Manual hand rearrangement persists through renders and online snapshots. Marriage bots retain visible Putali/Master cards before seeing maal. New Dhumbal games discard first, use rank-valued face cards and suited runs, and restrict discard pickup until a player has shed cards. New Dahar Mara deals thirteen cards to each of four partners, counts real trick wins for a 2–2 tens tie, and animates secured middle-pile collections. Faras has separated circular controls, pack flights and ordered on-table reveals. Table fireworks and synthesized firecracker sounds precede the result popup. See GAMEPLAY_REFINEMENTS.md for exact behavior and compatibility notes.
+
+190 automated tests passed. Browser checks verified manual Marriage/Dahar card dragging and Faras pack flights; desktop layouts were inspected and a conflicting Dahar landscape rule was corrected. Phone-frame verification was interrupted by a browser confirmation and remains pending. Physical Android verification remains required before public release. Internal upload status and final bundle hash will be recorded after validation.
